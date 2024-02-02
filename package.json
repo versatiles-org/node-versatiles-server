@@ -17,8 +17,10 @@
     "doc": "vrt cmd2md versatiles-server | vrt insertmd README.md '## Options'",
     "lint": "eslint . --color",
     "prepack": "npm run build && npm run doc",
+    "release": "npx vrt release-npm",
     "start": "tsx src/index.ts",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "upgrade": "npm-check-updates -u && rm -f package-lock.json; rm -rf node_modules; npm i && npm update"
   },
   "repository": {
     "type": "git",
