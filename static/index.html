@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>VersaTiles</title>
+	<meta name="viewport" content="width=device-width">
+	<script src="/assets/maplibre/maplibre-gl.js"></script>
+	<link href="/assets/maplibre/maplibre-gl.css" rel="stylesheet">
+	<style>
+		body {
+			margin: 0;
+		}
+
+		#map {
+			width: 100vw;
+			height: 100vh;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="map"></div>
+	<script>
+		(async () => {
+			const style = await (await fetch('tiles/style.json')).json();
+
+			const mapOptions = {
+				container: 'map',
+				style,
+				hash: true,
+				dragRotate: false,
+				touchZoomRotate: false,
+			}
+
+			const source = Object.values(style.sources)[0];
+			if (source.bounds) mapOptions.bounds = source.bounds;
+
+			const map = new maplibregl.Map(mapOptions);
+
+			map.addControl(new maplibregl.NavigationControl({ showCompass: false, visualizePitch: false }));
+		})()
+	</script>
+</body>
+
+</html>

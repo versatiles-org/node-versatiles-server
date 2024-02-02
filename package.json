@@ -1,0 +1,64 @@
+{
+  "name": "@versatiles/server",
+  "version": "1.3.0",
+  "description": "A server for VersaTiles",
+  "bin": {
+    "versatiles-server": "./dist/index.js"
+  },
+  "prefix": "./",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "static"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && chmod +x dist/index.js",
+    "check": "npm run lint && npm run build && npm run test",
+    "doc": "vrt cmd2md versatiles-server | vrt insertmd README.md '## Options'",
+    "lint": "eslint . --color",
+    "prepack": "npm run build && npm run doc",
+    "start": "tsx src/index.ts",
+    "test": "cd ../..; NODE_OPTIONS=--experimental-vm-modules jest --testPathPattern packages/server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/versatiles-org/node-versatiles.git"
+  },
+  "homepage": "https://github.com/versatiles-org/node-versatiles/blob/main/versatiles-server/README.md",
+  "type": "module",
+  "author": "yetzt <node@yetzt.me>, Michael Kreil <versatiles@michael-kreil.de>",
+  "license": "Unlicense",
+  "engines": {
+    "node": ">= 18"
+  },
+  "keywords": [
+    "cloudtiles",
+    "geo",
+    "gis",
+    "map",
+    "maps",
+    "mapserver",
+    "maptiles",
+    "mvt",
+    "opencloudtiles",
+    "osm",
+    "pbf",
+    "tile",
+    "tiles",
+    "tileserver",
+    "vectortiles",
+    "versatiles"
+  ],
+  "dependencies": {
+    "@versatiles/container": "^1.1.0",
+    "@versatiles/style": "^3.8.1",
+    "commander": "^11.1.0",
+    "open": "^10.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.16",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "@versatiles/release-tool": "^1.2.0"
+  }
+}
