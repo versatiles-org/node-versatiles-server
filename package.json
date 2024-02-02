@@ -19,6 +19,7 @@
     "prepack": "npm run build && npm run doc",
     "release": "npx vrt release-npm",
     "start": "tsx src/index.ts",
+    "test-coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "upgrade": "npm-check-updates -u && rm -f package-lock.json; rm -rf node_modules; npm i && npm update"
   },
