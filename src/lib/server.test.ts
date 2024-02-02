@@ -15,7 +15,7 @@ describe('Server', () => {
 
 	beforeAll(async () => {
 		const log = jest.spyOn(console, 'log').mockReturnValue();
-		server = new Server(resolve(DIRNAME, '../../testdata/island.versatiles'), { port, compress: true });
+		server = new Server(resolve(DIRNAME, 'testdata/island.versatiles'), { port, compress: true });
 		await server.start();
 		expect(log).toHaveBeenCalledWith('listening on port ' + port);
 	});

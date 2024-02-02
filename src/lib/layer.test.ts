@@ -2,7 +2,7 @@ import { Layer } from './layer.js';
 
 
 describe('Layer class', () => {
-	const filename = new URL('../../../../testdata/island.versatiles', import.meta.url).pathname;
+	const filename = new URL('../../testdata/island.versatiles', import.meta.url).pathname;
 	const layer: Layer = new Layer(filename);
 	const expectedHeader = {
 		tileFormat: 'pbf',
