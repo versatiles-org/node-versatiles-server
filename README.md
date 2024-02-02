@@ -1,3 +1,6 @@
+[![Code Coverage](https://codecov.io/gh/versatiles-org/node-versatiles-server/branch/main/graph/badge.svg?token=IDHAI13M0K)](https://codecov.io/gh/versatiles-org/node-versatiles-server)
+[![GitHub Workflow Status)](https://img.shields.io/github/actions/workflow/status/versatiles-org/node-versatiles-server/ci.yml)](https://github.com/versatiles-org/node-versatiles-server/actions/workflows/ci.yml)
+
 # VersaTiles - Server
 
 A Node.js server for [VersaTiles containers](https://github.com/versatiles-org/versatiles-spec).
