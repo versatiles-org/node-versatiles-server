@@ -9,7 +9,7 @@ export interface ContentResponse {
 export interface ResponseConfig {
 	acceptGzip: boolean;
 	acceptBr: boolean;
-	recompress: boolean;
+	optimalCompression: boolean;
 }
 
 export interface ServerOptions {

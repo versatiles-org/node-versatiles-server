@@ -7,14 +7,14 @@ export async function respondWithContent(res: ServerResponse, content: ContentRe
 	const mime: string = content.mime ?? 'application/octet-stream';
 	let compression: Compression = content.compression ?? 'raw';
 
-	const { acceptGzip, acceptBr, recompress } = config;
+	const { acceptGzip, acceptBr, optimalCompression } = config;
 
 	let data: Buffer = (typeof content.buffer === 'string') ? Buffer.from(content.buffer) : content.buffer;
 
 	switch (compression) {
 		case 'br':
 			if (acceptBr) break;
-			if (recompress && acceptGzip) {
+			if (optimalCompression && acceptGzip) {
 				data = await gzip(await unbrotli(data));
 				compression = 'gzip';
 				break;
@@ -24,16 +24,21 @@ export async function respondWithContent(res: ServerResponse, content: ContentRe
 			break;
 		case 'gzip':
 			if (acceptGzip) break;
+			if (optimalCompression && acceptBr) {
+				data = await brotli(await ungzip(data));
+				compression = 'br';
+				break;
+			}
 			data = await ungzip(data);
 			compression = 'raw';
 			break;
-		default:
-			if (recompress && acceptBr) {
+		default: // raw
+			if (optimalCompression && acceptBr) {
 				data = await brotli(data);
 				compression = 'br';
 				break;
 			}
-			if (recompress && acceptGzip) {
+			if (optimalCompression && acceptGzip) {
 				data = await gzip(data);
 				compression = 'gzip';
 				break;

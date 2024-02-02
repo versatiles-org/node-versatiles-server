@@ -60,7 +60,7 @@ export class Server {
 					const responseConfig: ResponseConfig = {
 						acceptBr: acceptedEncoding.includes('br'),
 						acceptGzip: acceptedEncoding.includes('gzip'),
-						recompress,
+						optimalCompression: recompress,
 					};
 
 					const path = new URL(req.url ?? '', 'resolve://').pathname;
