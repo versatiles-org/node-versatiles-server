@@ -5,7 +5,7 @@ describe('Compression Module', () => {
 	const testData = Buffer.from(testString);
 
 	// Test gzip compression and decompression
-	test('gzip and ungzip functions', async () => {
+	it('gzip and ungzip', async () => {
 		const gzipped = await gzip(testData);
 		expect(gzipped).toBeInstanceOf(Buffer);
 
@@ -15,12 +15,20 @@ describe('Compression Module', () => {
 	});
 
 	// Test brotli compression and decompression
-	test('brotli and unbrotli functions', async () => {
+	it('brotli and unbrotli', async () => {
 		const brotlified = await brotli(testData);
 		expect(brotlified).toBeInstanceOf(Buffer);
 
 		const unbrotlified = await unbrotli(brotlified);
 		expect(unbrotlified).toBeInstanceOf(Buffer);
 		expect(unbrotlified.toString()).toEqual(testString);
+	});
+
+	it('throws error on corrupt gzip data', async () => {
+		await expect(ungzip(testData)).rejects.toThrow('incorrect header check');
+	});
+
+	it('throws error on corrupt brotli data', async () => {
+		await expect(unbrotli(testData)).rejects.toThrow('Decompression failed');
 	});
 });
