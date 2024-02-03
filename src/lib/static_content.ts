@@ -110,12 +110,4 @@ export class StaticContent {
 			}
 		});
 	}
-
-	/**
-	 * Gets a list of all content currently stored in the map.
-	 * @returns A map of paths to their corresponding static responses.
-	 */
-	public getContentList(): Map<string, ContentResponse> {
-		return this.#map;
-	}
 }
