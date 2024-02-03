@@ -2,14 +2,20 @@ import type { Compression } from '@versatiles/container';
 import type { ServerResponse } from 'http';
 import { brotli, gzip, unbrotli, ungzip } from './compressors.js';
 import type { ResponseConfig, ContentResponse } from './types.js';
+import { readFile } from 'node:fs/promises';
 
-export async function respondWithContent(res: ServerResponse, content: ContentResponse, config: ResponseConfig): Promise<void> {
-	const mime: string = content.mime ?? 'application/octet-stream';
-	let compression: Compression = content.compression ?? 'raw';
+export async function respondWithContent(res: ServerResponse, response: ContentResponse, config: ResponseConfig): Promise<void> {
+	const mime: string = response.mime ?? 'application/octet-stream';
+	let compression: Compression = response.compression ?? 'raw';
 
 	const { acceptGzip, acceptBr, optimalCompression } = config;
 
-	let data: Buffer = (typeof content.buffer === 'string') ? Buffer.from(content.buffer) : content.buffer;
+	let data: Buffer;
+	if (typeof response.content === 'string') {
+		data = await readFile(response.content);
+	} else {
+		data = response.content;
+	}
 
 	switch (compression) {
 		case 'br':

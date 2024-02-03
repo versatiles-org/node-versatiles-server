@@ -14,10 +14,13 @@ import { getMimeByFilename } from './mime_types.js';
 export class StaticContent {
 	readonly #map: Map<string, ContentResponse>;
 
+	readonly #noCache: boolean;
+
 	/**
 	 * Constructs a new instance of the StaticContent class.
 	 */
-	public constructor() {
+	public constructor(noCache: boolean) {
+		this.#noCache = noCache;
 		this.#map = new Map();
 	}
 
@@ -46,31 +49,23 @@ export class StaticContent {
 	/**
 	 * Adds a new static response to the map.
 	 * @param path - The path where the static response will be accessible.
-	 * @param content - The content to serve, can be a Buffer, object, or string.
+	 * @param content - The content to serve, can be content as a Buffer or path as a string.
 	 * @param mime - The MIME type of the content.
 	 * @param compression - The compression method used, if any.
 	 * @throws Will throw an error if the path already exists in the map.
 	 */
 	// eslint-disable-next-line @typescript-eslint/max-params
-	public add(path: string, content: Buffer | object | string, mime: string, compression: Compression = 'raw'): void {
-		let buffer: Buffer;
+	public addFile(path: string, content: Buffer | string, mime: string, compression: Compression = 'raw'): void {
+		if ((typeof content === 'string') && !this.#noCache) content = readFileSync(content);
 
-		if (Buffer.isBuffer(content)) {
-			buffer = content;
-		} else if (typeof content === 'string') {
-			buffer = Buffer.from(content);
-		} else {
-			buffer = Buffer.from(JSON.stringify(content));
-		}
-
-		this.#map.set(path, { buffer, mime, compression });
+		this.#map.set(path, { content, mime, compression });
 
 		if (path.endsWith('/index.html')) {
 			path = path.replace(/index\.html$/, '');
-			this.#map.set(path, { buffer, mime, compression });
+			this.#map.set(path, { content, mime, compression });
 			if (path.length > 2) {
 				path = path.replace(/\/$/, '');
-				this.#map.set(path, { buffer, mime, compression });
+				this.#map.set(path, { content, mime, compression });
 			}
 		}
 	}
@@ -106,7 +101,7 @@ export class StaticContent {
 					subUrl = subUrl.replace(/\.[^.]+$/, '');
 				}
 
-				this.add(subUrl, readFileSync(subDir), getMimeByFilename(name, true), compression);
+				this.addFile(subUrl, subDir, getMimeByFilename(name, true), compression);
 			}
 		});
 	}

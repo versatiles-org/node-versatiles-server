@@ -31,7 +31,9 @@ describe('index.ts', () => {
 		baseUrl: undefined,
 		compress: false,
 		host: '0.0.0.0',
+		noCache: false,
 		port: 8080,
+		static: undefined,
 		tms: false,
 	};
 

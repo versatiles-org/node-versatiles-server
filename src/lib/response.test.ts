@@ -28,7 +28,7 @@ describe('Response Tests', () => {
 
 	describe('respond with content', () => {
 		it('should set correct headers and respond with content', async () => {
-			const content = { buffer: 'test', mime: 'text/plain' };
+			const content = { content: Buffer.from('test'), mime: 'text/plain' };
 			const config = { acceptGzip: true, acceptBr: false, optimalCompression: false };
 
 			await respondWithContent(mockRes, content, config);
@@ -37,9 +37,9 @@ describe('Response Tests', () => {
 			expect(mockRes.statusCode).toBe(200);
 			expect(mockRes.end).toHaveBeenCalledWith(Buffer.from('test'));
 		});
-		
+
 		it('should set correct mime if missing', async () => {
-			const content = { buffer: 'test' };
+			const content = { content: Buffer.from('test') };
 			const config = { acceptGzip: true, acceptBr: false, optimalCompression: false };
 
 			await respondWithContent(mockRes, content, config);
@@ -96,7 +96,7 @@ describe('Response Tests', () => {
 			// eslint-disable-next-line @typescript-eslint/no-loop-func
 			it(`${buffer} -> ${accept} (${optimal ? 'optimal' : 'fast'})`, async () => {
 				const content: ContentResponse = {
-					buffer: buffers[buffer],
+					content: buffers[buffer],
 					mime: 'text/plain',
 					compression: buffer,
 				};

@@ -1,7 +1,7 @@
 import type { Compression, Format } from '@versatiles/container';
 
 export interface ContentResponse {
-	buffer: Buffer | string;
+	content: Buffer | string;
 	mime?: string;
 	compression?: Compression;
 }
@@ -13,15 +13,16 @@ export interface ResponseConfig {
 }
 
 export interface ServerOptions {
-	compress?: boolean;
-	baseUrl?: string;
+	baseUrl?: string; // Base URL for the server (default: "http://localhost:<port>/")
+	compress?: boolean; // Reduces traffic by recompressing data, but responses take longer. Perfect if behind CDN.
 	glyphsUrl?: string;
+	host?: string; // Hostname or IP to bind the server to', '0.0.0.0'
+	noCache?: boolean; // disable cache and serve static files directly from disc
+	port?: number; // Port to bind the server to (default: 8080)
 	spriteUrl?: string;
+	static?: string; // Path to a folder with static files
 	tilesUrl?: string;
-	host?: string;
-	port?: number;
-	static?: string;
-	tms?: boolean;
+	tms?: boolean; // Use TMS tile order (flip y axis)
 }
 
 export interface ContainerInfo {

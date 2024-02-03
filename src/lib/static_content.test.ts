@@ -6,7 +6,7 @@ describe('StaticContent', () => {
 	let staticContent: StaticContent;
 
 	beforeEach(() => {
-		staticContent = new StaticContent();
+		staticContent = new StaticContent(false);
 	});
 
 	describe('constructor', () => {
@@ -18,27 +18,27 @@ describe('StaticContent', () => {
 	describe('add method', () => {
 		it('should add text content', () => {
 			const path = '/text';
-			const content = 'Hello World';
+			const content = Buffer.from('Hello World');
 			const mime = 'text/plain';
-			staticContent.add(path, content, mime);
-			expect(staticContent.get(path)).toEqual({ buffer: Buffer.from(content), mime, compression: 'raw' });
+			staticContent.addFile(path, content, mime);
+			expect(staticContent.get(path)).toEqual({ content, mime, compression: 'raw' });
 		});
 
 		it('should serve "/index.html" under "/"', () => {
 			const path = '/index.html';
-			const content = 'Hello World';
+			const content = Buffer.from('Hello World');
 			const mime = 'text/plain';
-			staticContent.add(path, content, mime);
-			expect(staticContent.get('/')).toEqual({ buffer: Buffer.from(content), mime, compression: 'raw' });
+			staticContent.addFile(path, content, mime);
+			expect(staticContent.get('/')).toEqual({ content, mime, compression: 'raw' });
 		});
 
 		it('should serve "/data/index.html" under "/data/" and "/data"', () => {
 			const path = '/data/index.html';
-			const content = 'Hello World';
+			const content = Buffer.from('Hello World');
 			const mime = 'text/plain';
-			staticContent.add(path, content, mime);
-			expect(staticContent.get('/data')).toEqual({ buffer: Buffer.from(content), mime, compression: 'raw' });
-			expect(staticContent.get('/data/')).toEqual({ buffer: Buffer.from(content), mime, compression: 'raw' });
+			staticContent.addFile(path, content, mime);
+			expect(staticContent.get('/data')).toEqual({ content, mime, compression: 'raw' });
+			expect(staticContent.get('/data/')).toEqual({ content, mime, compression: 'raw' });
 		});
 	});
 
@@ -66,7 +66,7 @@ describe('StaticContent', () => {
 			files.forEach((file: string) => {
 				const expectedPath = url + file;
 				expect(staticContent.get(expectedPath)).toEqual({
-					buffer: readFileSync(resolve(dir, file)),
+					content: readFileSync(resolve(dir, file)),
 					mime: mimeTypes.get(file.replace(/.*\./, '')),
 					compression: 'raw',
 				});

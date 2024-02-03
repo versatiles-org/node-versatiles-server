@@ -1,6 +1,5 @@
 import { createServer } from 'node:http';
 import { Layer } from './layer.js';
-import { readFileSync } from 'node:fs';
 import { resolve as resolvePath } from 'node:path';
 import { respondWithContent, respondWithError } from './response.js';
 import { StaticContent } from './static_content.js';
@@ -119,20 +118,19 @@ export class Server {
 	}
 
 	async #buildStaticContent(): Promise<StaticContent> {
-		const staticContent = new StaticContent();
+		const staticContent = new StaticContent(this.#options.noCache ?? false);
 
-		const html = readFileSync(resolvePath(DIRNAME, 'static/index.html'));
-		staticContent.add('/index.html', html, 'text/html; charset=utf-8');
+		staticContent.addFile('/index.html', resolvePath(DIRNAME, 'static/index.html'), 'text/html; charset=utf-8');
 
-		staticContent.add(
+		staticContent.addFile(
 			'/tiles/style.json',
-			await this.#layer.getStyle(this.#options),
+			Buffer.from(await this.#layer.getStyle(this.#options)),
 			'application/json; charset=utf-8',
 		);
 
-		staticContent.add(
+		staticContent.addFile(
 			'/tiles/tile.json',
-			await this.#layer.getMetadata() ?? {},
+			Buffer.from(await this.#layer.getMetadata() ?? ''),
 			'application/json; charset=utf-8',
 		);
 
