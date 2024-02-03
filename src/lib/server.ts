@@ -138,6 +138,10 @@ export class Server {
 
 		staticContent.addFolder('/assets', resolvePath(DIRNAME, 'static/assets'));
 
+		if (this.#options.static != null) {
+			staticContent.addFolder('/', this.#options.static);
+		}
+
 		return staticContent;
 	}
 }

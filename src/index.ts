@@ -21,6 +21,7 @@ program
 	.option('-h, --host <hostnameip>', 'Hostname or IP to bind the server to', '0.0.0.0')
 	.option('-o, --open', 'Open map in web browser')
 	.option('-p, --port <port>', 'Port to bind the server to (default: 8080)')
+	.option('-s, --static <folder>', 'Path to a folder with static files')
 	.option('-t, --tms', 'Use TMS tile order (flip y axis)')
 	.argument('<source>', 'VersaTiles container, can be a URL or filename of a "*.versatiles" file')
 	.action(async (source: string, cmdOptions: Record<string, unknown>) => {
@@ -29,6 +30,7 @@ program
 			compress: Boolean(cmdOptions.compress),
 			host: String(cmdOptions.host ?? '0.0.0.0'),
 			port: Number(cmdOptions.port ?? 8080),
+			static: cmdOptions.static as string | undefined,
 			tms: Boolean(cmdOptions.tms),
 		};
 

@@ -20,6 +20,7 @@ export interface ServerOptions {
 	tilesUrl?: string;
 	host?: string;
 	port?: number;
+	static?: string;
 	tms?: boolean;
 }
 
