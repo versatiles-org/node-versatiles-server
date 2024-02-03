@@ -14,13 +14,10 @@ import { getMimeByFilename } from './mime_types.js';
 export class StaticContent {
 	readonly #map: Map<string, ContentResponse>;
 
-	readonly #noCache: boolean;
-
 	/**
 	 * Constructs a new instance of the StaticContent class.
 	 */
-	public constructor(noCache: boolean) {
-		this.#noCache = noCache;
+	public constructor() {
 		this.#map = new Map();
 	}
 
@@ -55,9 +52,7 @@ export class StaticContent {
 	 * @throws Will throw an error if the path already exists in the map.
 	 */
 	// eslint-disable-next-line @typescript-eslint/max-params
-	public addFile(path: string, content: Buffer | string, mime: string, compression: Compression = 'raw'): void {
-		if ((typeof content === 'string') && !this.#noCache) content = readFileSync(content);
-
+	public addFile(path: string, content: Buffer, mime: string, compression: Compression = 'raw'): void {
 		this.#map.set(path, { content, mime, compression });
 
 		if (path.endsWith('/index.html')) {
@@ -101,7 +96,7 @@ export class StaticContent {
 					subUrl = subUrl.replace(/\.[^.]+$/, '');
 				}
 
-				this.addFile(subUrl, subDir, getMimeByFilename(name, true), compression);
+				this.addFile(subUrl, readFileSync(subDir), getMimeByFilename(name, true), compression);
 			}
 		});
 	}

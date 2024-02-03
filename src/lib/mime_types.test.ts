@@ -1,31 +1,7 @@
-import { getMimeByFilename, getMimeByFormat } from './mime_types.js'; // Replace with the actual path of your module
+import { getMimeByFilename } from './mime_types.js'; // Replace with the actual path of your module
 import { jest } from '@jest/globals';
 
 describe('MIME Type Tests', () => {
-	describe('getMimeByFormat', () => {
-		it('should return the correct MIME type for valid formats', () => {
-			expect(getMimeByFormat('avif')).toBe('image/avif');
-			expect(getMimeByFormat('bin')).toBe('application/octet-stream');
-			expect(getMimeByFormat('css')).toBe('text/css; charset=utf-8');
-			expect(getMimeByFormat('geojson')).toBe('application/geo+json; charset=utf-8');
-			expect(getMimeByFormat('htm')).toBe('text/html; charset=utf-8');
-			expect(getMimeByFormat('html')).toBe('text/html; charset=utf-8');
-			expect(getMimeByFormat('jpeg')).toBe('image/jpeg');
-			expect(getMimeByFormat('jpg')).toBe('image/jpeg');
-			expect(getMimeByFormat('js')).toBe('text/javascript; charset=utf-8');
-			expect(getMimeByFormat('json')).toBe('application/json; charset=utf-8');
-			expect(getMimeByFormat('pbf')).toBe('application/x-protobuf');
-			expect(getMimeByFormat('png')).toBe('image/png');
-			expect(getMimeByFormat('svg')).toBe('image/svg+xml; charset=utf-8');
-			expect(getMimeByFormat('topojson')).toBe('application/topo+json; charset=utf-8');
-			expect(getMimeByFormat('webp')).toBe('image/webp');
-		});
-
-		it('should return default MIME type for invalid formats', () => {
-			expect(getMimeByFormat('unknown')).toBe('application/octet-stream');
-		});
-	});
-
 	describe('getMimeByFilename', () => {
 		it('should return the correct MIME type for valid filenames', () => {
 			expect(getMimeByFilename('image.avif')).toBe('image/avif');

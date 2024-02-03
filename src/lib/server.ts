@@ -1,11 +1,14 @@
 import { createServer } from 'node:http';
 import { Layer } from './layer.js';
-import { resolve as resolvePath } from 'node:path';
+import { resolve, resolve as resolvePath } from 'node:path';
 import { respondWithContent, respondWithError } from './response.js';
 import { StaticContent } from './static_content.js';
 import type { Reader } from '@versatiles/container';
 import type { ResponseConfig, ServerOptions } from './types.js';
 import type { Server as httpServer } from 'node:http';
+import { readFile, stat } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { getMimeByFilename } from './mime_types.js';
 
 const DIRNAME = new URL('../../', import.meta.url).pathname;
 
@@ -46,11 +49,13 @@ export class Server {
 			void (async (): Promise<void> => {
 				try {
 					if (req.method !== 'GET') {
-						respondWithError(res, 'Method not allowed', 405); return;
+						respondWithError(res, 'Method not allowed', 405);
+						return;
 					}
 
 					if (!(req.url ?? '')) {
-						respondWithError(res, 'URL not found', 404); return;
+						respondWithError(res, 'URL not found', 404);
+						return;
 					}
 
 					// check request
@@ -72,7 +77,8 @@ export class Server {
 						const [_, z, x, y] = match;
 						const tileResponse = await getTile(parseInt(z, 10), parseInt(x, 10), parseInt(y, 10));
 						if (!tileResponse) {
-							respondWithError(res, 'tile not found: ' + path, 404); return;
+							respondWithError(res, 'tile not found: ' + path, 404);
+							return;
 						}
 						await respondWithContent(res, tileResponse, responseConfig);
 						return;
@@ -80,17 +86,47 @@ export class Server {
 
 					// check if request for static content
 
+					if ((this.#options.noCache === true) && (this.#options.static != null)) {
+						let filename = resolve(this.#options.static, path.replace(/^\/+/, ''));
+						if (!filename.startsWith(this.#options.static)) {
+							respondWithError(res, 'file not found: ' + path, 404);
+							return;
+						}
+						if ((await stat(filename)).isDirectory()) {
+							filename = resolve(filename, 'index.html');
+						}
+						if (existsSync(filename)) {
+							await respondWithContent(
+								res,
+								{
+									content: await readFile(filename),
+									compression: 'raw',
+									mime: getMimeByFilename(filename),
+								},
+								responseConfig,
+							);
+						} else {
+							respondWithError(res, 'file not found: ' + path, 404);
+							return;
+						}
+					}
+
+					// check if request for cached static content
+
 					const contentResponse = staticContent.get(path);
 					if (contentResponse) {
-						await respondWithContent(res, contentResponse, responseConfig); return;
+						await respondWithContent(res, contentResponse, responseConfig);
+						return;
 					}
 
 					// error 404
 
-					respondWithError(res, 'file not found: ' + path, 404); return;
+					respondWithError(res, 'file not found: ' + path, 404);
+					return;
 
 				} catch (err) {
-					respondWithError(res, err, 500); return;
+					respondWithError(res, err, 500);
+					return;
 				}
 			})();
 		});
@@ -108,19 +144,19 @@ export class Server {
 
 	public async stop(): Promise<void> {
 		if (this.#server === undefined) return;
-		await new Promise<void>((resolve, reject) => {
+		await new Promise<void>((res, rej) => {
 			this.#server?.close(err => {
-				if (err) reject(err);
-				else resolve();
+				if (err) rej(err);
+				else res();
 			});
 		});
 		this.#server = undefined;
 	}
 
 	async #buildStaticContent(): Promise<StaticContent> {
-		const staticContent = new StaticContent(this.#options.noCache ?? false);
+		const staticContent = new StaticContent();
 
-		staticContent.addFile('/index.html', resolvePath(DIRNAME, 'static/index.html'), 'text/html; charset=utf-8');
+		staticContent.addFolder('/', resolvePath(DIRNAME, 'static'));
 
 		staticContent.addFile(
 			'/tiles/style.json',
@@ -134,9 +170,7 @@ export class Server {
 			'application/json; charset=utf-8',
 		);
 
-		staticContent.addFolder('/assets', resolvePath(DIRNAME, 'static/assets'));
-
-		if (this.#options.static != null) {
+		if ((this.#options.static != null) && (this.#options.noCache !== true)) {
 			staticContent.addFolder('/', this.#options.static);
 		}
 

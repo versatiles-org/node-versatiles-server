@@ -20,14 +20,10 @@ const MIMETYPES = new Map([
 export function getMimeByFilename(filename: string, warn?: boolean): string {
 	const format = filename.replace(/.*\./, '').toLowerCase();
 
-	if ((warn ?? false) && !MIMETYPES.has(format)) {
+	if ((warn === true) && !MIMETYPES.has(format)) {
 		console.warn('can not guess MIME for file: ' + filename);
 	}
 
-	return getMimeByFormat(format);
-}
-
-export function getMimeByFormat(format: string): string {
 	return MIMETYPES.get(format) ?? 'application/octet-stream';
 }
 

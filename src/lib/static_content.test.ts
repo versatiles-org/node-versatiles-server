@@ -6,7 +6,7 @@ describe('StaticContent', () => {
 	let staticContent: StaticContent;
 
 	beforeEach(() => {
-		staticContent = new StaticContent(false);
+		staticContent = new StaticContent();
 	});
 
 	describe('constructor', () => {

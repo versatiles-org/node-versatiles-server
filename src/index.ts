@@ -4,6 +4,7 @@ import { Command } from 'commander';
 import type { ServerOptions } from './lib/types.js';
 import open from 'open';
 import { Server } from './lib/server.js';
+import { resolve } from 'node:path';
 
 /**
  * Entry script for the VersaTiles server command-line application.
@@ -32,7 +33,7 @@ program
 			host: String(cmdOptions.host ?? '0.0.0.0'),
 			noCache: Boolean(cmdOptions.noCache),
 			port: Number(cmdOptions.port ?? 8080),
-			static: cmdOptions.static as string | undefined,
+			static: cmdOptions.static != null ? resolve(process.cwd(), cmdOptions.static as string) : undefined,
 			tms: Boolean(cmdOptions.tms),
 		};
 
