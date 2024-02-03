@@ -28,7 +28,7 @@ describe('Server', () => {
 		await server.stop();
 	});
 
-	test('Server should serve static content', async () => {
+	it('should serve static content', async () => {
 		const response = await fetch(`${baseUrl}/index.html`, {
 			headers: { 'Accept-Encoding': 'deflate' },
 		});
@@ -40,7 +40,7 @@ describe('Server', () => {
 		expect(await response.text()).toBe(indexContent);
 	});
 
-	test('Server should serve Brotli compressed content', async () => {
+	it('should serve Brotli compressed content', async () => {
 		const response = await fetch(`${baseUrl}/index.html`, {
 			headers: { 'Accept-Encoding': 'br' },
 		});
@@ -52,7 +52,7 @@ describe('Server', () => {
 		expect(await response.text()).toBe(indexContent);
 	});
 
-	test('Server should serve GZip compressed content', async () => {
+	it('should serve GZip compressed content', async () => {
 		const response = await fetch(`${baseUrl}/index.html`, {
 			headers: { 'Accept-Encoding': 'gzip' },
 		});
@@ -64,7 +64,7 @@ describe('Server', () => {
 		expect(await response.text()).toBe(indexContent);
 	});
 
-	test('Server should respond with 404 for unknown content', async () => {
+	it('should respond with 404 for unknown content', async () => {
 		const error = jest.spyOn(console, 'error').mockReturnValue();
 		const response = await fetch(`${baseUrl}/nonexistent.file`);
 
@@ -72,7 +72,7 @@ describe('Server', () => {
 		expect(error).toHaveBeenCalledWith('file not found: /nonexistent.file');
 	});
 
-	test('Server should serve tile data correctly 1/2', async () => {
+	it('should serve tile data correctly 1/2', async () => {
 		const response = await fetch(`${baseUrl}/tiles/8/55/67`);
 
 		expect(response.status).toBe(200);
@@ -80,7 +80,7 @@ describe('Server', () => {
 		expect(await getResponseHash(response)).toBe('ISZuz4Nvv0yCNnZQpLxATu6lYTB5conusgV42FIYBm4=');
 	});
 
-	test('Server should serve tile data correctly 2/2', async () => {
+	it('should serve tile data correctly 2/2', async () => {
 		const response = await fetch(`${baseUrl}/tiles/14/3740/4505`);
 
 		expect(response.status).toBe(200);
@@ -88,7 +88,7 @@ describe('Server', () => {
 		expect(await getResponseHash(response)).toBe('yubXQj2G+xYXgIDaUXzPHqnhghRnjAUgFMe8mSQEE2A=');
 	});
 
-	test('Server should error on missing tiles 1/2', async () => {
+	it('should throw error on missing tiles 1/2', async () => {
 		const error = jest.spyOn(console, 'error').mockReturnValue();
 		const response = await fetch(`${baseUrl}/tiles/0/0/0`);
 
@@ -98,7 +98,7 @@ describe('Server', () => {
 		expect(error).toHaveBeenCalledWith('tile not found: /tiles/0/0/0');
 	});
 
-	test('Server should error on missing tiles 2/2', async () => {
+	it('should throw error on missing tiles 2/2', async () => {
 		const error = jest.spyOn(console, 'error').mockReturnValue();
 		const response = await fetch(`${baseUrl}/tiles/12/34/56`);
 
@@ -108,7 +108,7 @@ describe('Server', () => {
 		expect(error).toHaveBeenCalledWith('tile not found: /tiles/12/34/56');
 	});
 
-	test('Server should handle unsupported HTTP methods with 405', async () => {
+	it('should handle unsupported HTTP methods with 405', async () => {
 		const error = jest.spyOn(console, 'error').mockReturnValue();
 		const response = await fetch(`${baseUrl}/index.html`, { method: 'POST' });
 
@@ -116,7 +116,7 @@ describe('Server', () => {
 		expect(error).toHaveBeenCalledWith('Method not allowed');
 	});
 
-	test('Server should serve dynamic JSON content correctly', async () => {
+	it('should serve dynamic JSON content correctly', async () => {
 		const response = await fetch(`${baseUrl}/tiles/style.json`);
 
 		expect(response.status).toBe(200);
