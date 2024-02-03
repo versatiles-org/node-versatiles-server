@@ -122,7 +122,6 @@ export class Server {
 		const staticContent = new StaticContent();
 
 		const html = readFileSync(resolvePath(DIRNAME, 'static/index.html'));
-		staticContent.add('/', html, 'text/html; charset=utf-8');
 		staticContent.add('/index.html', html, 'text/html; charset=utf-8');
 
 		staticContent.add(

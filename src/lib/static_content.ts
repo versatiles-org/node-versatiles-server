@@ -63,8 +63,16 @@ export class StaticContent {
 			buffer = Buffer.from(JSON.stringify(content));
 		}
 
-		if (this.#map.has(path)) throw Error();
 		this.#map.set(path, { buffer, mime, compression });
+
+		if (path.endsWith('/index.html')) {
+			path = path.replace(/index\.html$/, '');
+			this.#map.set(path, { buffer, mime, compression });
+			if (path.length > 2) {
+				path = path.replace(/\/$/, '');
+				this.#map.set(path, { buffer, mime, compression });
+			}
+		}
 	}
 
 	/**

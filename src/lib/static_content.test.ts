@@ -24,14 +24,21 @@ describe('StaticContent', () => {
 			expect(staticContent.get(path)).toEqual({ buffer: Buffer.from(content), mime, compression: 'raw' });
 		});
 
-		it('should throw an error if path already exists', () => {
-			const path = '/duplicate';
+		it('should serve "/index.html" under "/"', () => {
+			const path = '/index.html';
 			const content = 'Hello World';
 			const mime = 'text/plain';
 			staticContent.add(path, content, mime);
-			expect(() => {
-				staticContent.add(path, content, mime);
-			}).toThrow();
+			expect(staticContent.get('/')).toEqual({ buffer: Buffer.from(content), mime, compression: 'raw' });
+		});
+
+		it('should serve "/data/index.html" under "/data/" and "/data"', () => {
+			const path = '/data/index.html';
+			const content = 'Hello World';
+			const mime = 'text/plain';
+			staticContent.add(path, content, mime);
+			expect(staticContent.get('/data')).toEqual({ buffer: Buffer.from(content), mime, compression: 'raw' });
+			expect(staticContent.get('/data/')).toEqual({ buffer: Buffer.from(content), mime, compression: 'raw' });
 		});
 	});
 
