@@ -1,7 +1,7 @@
 import type { Compression } from '@versatiles/container';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
-import type { ContentResponse } from './types.js';
+import type { ResponseContent } from './types.js';
 import { getMimeByFilename } from './mime_types.js';
 
 
@@ -12,7 +12,7 @@ import { getMimeByFilename } from './mime_types.js';
  * and optional compression. This class is useful for serving static files in a web server context.
  */
 export class StaticContent {
-	readonly #map: Map<string, ContentResponse>;
+	readonly #map: Map<string, ResponseContent>;
 
 	/**
 	 * Constructs a new instance of the StaticContent class.
@@ -39,7 +39,7 @@ export class StaticContent {
 	 * @param path - The path to retrieve the static response for.
 	 * @returns The static response or undefined if not found.
 	 */
-	public get(path: string): ContentResponse | undefined {
+	public get(path: string): ResponseContent | undefined {
 		return this.#map.get(path);
 	}
 

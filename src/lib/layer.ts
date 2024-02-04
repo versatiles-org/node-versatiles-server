@@ -1,6 +1,6 @@
 import type { Compression, Reader } from '@versatiles/container';
 import { Container } from '@versatiles/container';
-import type { ContainerInfo, ContentResponse, ServerOptions } from './types.js';
+import type { ContainerInfo, ResponseContent, ServerOptions } from './types.js';
 import { generateStyle } from './style.js';
 
 
@@ -27,14 +27,14 @@ export class Layer {
 		this.#info = { header, metadata };
 	}
 
-	public async getTileFunction(): Promise<(z: number, x: number, y: number) => Promise<ContentResponse | null>> {
+	public async getTileFunction(): Promise<(z: number, x: number, y: number) => Promise<ResponseContent | null>> {
 		await this.init();
 
 		const container = this.#container;
 		const mime = this.#mime;
 		const compression = this.#compression;
 
-		return async (z: number, x: number, y: number): Promise<ContentResponse | null> => {
+		return async (z: number, x: number, y: number): Promise<ResponseContent | null> => {
 			const content = await container.getTile(z, x, y);
 			if (!content) return null;
 			return { content, mime, compression };

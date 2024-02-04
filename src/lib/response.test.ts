@@ -1,25 +1,27 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { IncomingMessage, ServerResponse } from 'http';
-import { respondWithContent, respondWithError } from './response.js';
+import { Response } from './response.js';
 import { Socket } from 'net';
 import { jest } from '@jest/globals';
-import type { ContentResponse } from './types.js';
+import type { ResponseContent } from './types.js';
 import { brotliCompressSync, gzipSync } from 'zlib';
 
 type Compression = 'br' | 'gzip' | 'raw';
 
 describe('Response Tests', () => {
 	let mockRes: ServerResponse;
+	let response: Response;
 
 	beforeEach(() => {
 		const mockSocket = new Socket();
-		const mockReq = new IncomingMessage(mockSocket);
-		mockRes = jest.mocked(new ServerResponse(mockReq));
+		const mockedRequest = new IncomingMessage(mockSocket);
+		mockRes = jest.mocked(new ServerResponse(mockedRequest));
 		jest.spyOn(mockRes, 'setHeader');
 		jest.spyOn(mockRes, 'end');
 		jest.spyOn(console, 'error').mockImplementation(() => {
 			return;
 		});
+		response = new Response(mockRes);
 	});
 
 	afterEach(() => {
@@ -31,7 +33,7 @@ describe('Response Tests', () => {
 			const content = { content: Buffer.from('test'), mime: 'text/plain' };
 			const config = { acceptGzip: true, acceptBr: false, optimalCompression: false };
 
-			await respondWithContent(mockRes, content, config);
+			await response.sendContent(content, config);
 
 			expect(mockRes.setHeader).toHaveBeenCalledWith('content-type', 'text/plain');
 			expect(mockRes.statusCode).toBe(200);
@@ -42,7 +44,7 @@ describe('Response Tests', () => {
 			const content = { content: Buffer.from('test') };
 			const config = { acceptGzip: true, acceptBr: false, optimalCompression: false };
 
-			await respondWithContent(mockRes, content, config);
+			await response.sendContent(content, config);
 
 			expect(mockRes.setHeader).toHaveBeenCalledWith('content-type', 'application/octet-stream');
 			expect(mockRes.statusCode).toBe(200);
@@ -95,7 +97,7 @@ describe('Response Tests', () => {
 		for (const { buffer, accept, optimal, result } of cases) {
 			// eslint-disable-next-line @typescript-eslint/no-loop-func
 			it(`${buffer} -> ${accept} (${optimal ? 'optimal' : 'fast'})`, async () => {
-				const content: ContentResponse = {
+				const content: ResponseContent = {
 					content: buffers[buffer],
 					mime: 'text/plain',
 					compression: buffer,
@@ -106,7 +108,7 @@ describe('Response Tests', () => {
 					optimalCompression: optimal,
 				};
 
-				await respondWithContent(mockRes, content, config);
+				await response.sendContent(content, config);
 
 				switch (result) {
 					case 'raw':
@@ -138,7 +140,7 @@ describe('Response Tests', () => {
 	describe('respond with error', () => {
 		it('should handle error responses', () => {
 			const error = new Error('Test error');
-			respondWithError(mockRes, error, 500);
+			response.sendError(error, 500);
 
 			expect(console.error).toHaveBeenCalledWith(error);
 			expect(mockRes.setHeader).toHaveBeenCalledWith('content-type', 'text/plain');

@@ -1,7 +1,7 @@
 import { createServer } from 'node:http';
 import { Layer } from './layer.js';
 import { resolve as resolvePath } from 'node:path';
-import { respondWithContent, respondWithError } from './response.js';
+import { Response } from './response.js';
 import { StaticContent } from './static_content.js';
 import type { Reader } from '@versatiles/container';
 import type { ResponseConfig, ServerOptions } from './types.js';
@@ -40,21 +40,21 @@ export class Server {
 
 	public async start(): Promise<void> {
 		const getTile = await this.#layer.getTileFunction();
-
 		const recompress = this.#options.compress ?? false;
-
 		const staticContent = await this.#buildStaticContent();
 
 		const server = createServer((req, res) => {
 			void (async (): Promise<void> => {
+				const response = new Response(res);
+
 				try {
 					if (req.method !== 'GET') {
-						respondWithError(res, 'Method not allowed', 405);
+						response.sendError('Method not allowed', 405);
 						return;
 					}
 
 					if (!(req.url ?? '')) {
-						respondWithError(res, 'URL not found', 404);
+						response.sendError('URL not found', 404);
 						return;
 					}
 
@@ -77,10 +77,10 @@ export class Server {
 						const [_, z, x, y] = match;
 						const tileResponse = await getTile(parseInt(z, 10), parseInt(x, 10), parseInt(y, 10));
 						if (!tileResponse) {
-							respondWithError(res, 'tile not found: ' + path, 404);
+							response.sendError('tile not found: ' + path, 404);
 							return;
 						}
-						await respondWithContent(res, tileResponse, responseConfig);
+						await response.sendContent(tileResponse, responseConfig);
 						return;
 					}
 
@@ -90,8 +90,7 @@ export class Server {
 						const filename = await findFile(this.#options.static, path);
 
 						if (filename != null) {
-							await respondWithContent(
-								res,
+							await response.sendContent(
 								{
 									content: await readFile(filename),
 									compression: 'raw',
@@ -108,17 +107,17 @@ export class Server {
 
 					const contentResponse = staticContent.get(path);
 					if (contentResponse) {
-						await respondWithContent(res, contentResponse, responseConfig);
+						await response.sendContent(contentResponse, responseConfig);
 						return;
 					}
 
 					// error 404
 
-					respondWithError(res, 'file not found: ' + path, 404);
+					response.sendError('file not found: ' + path, 404);
 					return;
 
 				} catch (err) {
-					respondWithError(res, err, 500);
+					response.sendError(err, 500);
 					return;
 				}
 			})();
