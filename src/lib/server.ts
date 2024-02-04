@@ -165,7 +165,7 @@ export class Server {
 		);
 
 		staticContent.addFile(
-			'/tiles/tile.json',
+			'/tiles/meta.json',
 			Buffer.from(await this.#layer.getMetadata() ?? ''),
 			'application/json; charset=utf-8',
 		);
