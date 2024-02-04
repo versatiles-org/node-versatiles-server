@@ -1,5 +1,4 @@
 
-
 let doLogImportant = true;
 let doLogInfo = false;
 let doLogDebug = false;
@@ -17,7 +16,7 @@ export function logDebug(text: string): void {
 }
 
 export function setLogLevel(logLevel: number): void {
-	// 0=quiet, 1=default, 2=verbose, 3=verbose
+	// 0=quiet, 1=default, 2=verbose, 3=debug
 	doLogImportant = logLevel > 0;
 	doLogInfo = logLevel > 1;
 	doLogDebug = logLevel > 2;
