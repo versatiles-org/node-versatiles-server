@@ -31,7 +31,7 @@ program
 			baseUrl: cmdOptions.baseUrl as string | undefined,
 			compress: Boolean(cmdOptions.compress),
 			host: String(cmdOptions.host ?? '0.0.0.0'),
-			noCache: Boolean(cmdOptions.noCache),
+			cache: Boolean(cmdOptions.cache),
 			port: Number(cmdOptions.port ?? 8080),
 			static: cmdOptions.static != null ? resolve(process.cwd(), cmdOptions.static as string) : undefined,
 			tms: Boolean(cmdOptions.tms),

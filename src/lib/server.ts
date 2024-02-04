@@ -1,14 +1,14 @@
 import { createServer } from 'node:http';
 import { Layer } from './layer.js';
-import { resolve, resolve as resolvePath } from 'node:path';
+import { resolve as resolvePath } from 'node:path';
 import { respondWithContent, respondWithError } from './response.js';
 import { StaticContent } from './static_content.js';
 import type { Reader } from '@versatiles/container';
 import type { ResponseConfig, ServerOptions } from './types.js';
 import type { Server as httpServer } from 'node:http';
-import { readFile, stat } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { getMimeByFilename } from './mime_types.js';
+import { findFile } from './file.js';
 
 const DIRNAME = new URL('../../', import.meta.url).pathname;
 
@@ -86,16 +86,10 @@ export class Server {
 
 					// check if request for static content
 
-					if ((this.#options.noCache === true) && (this.#options.static != null)) {
-						let filename = resolve(this.#options.static, path.replace(/^\/+/, ''));
-						if (!filename.startsWith(this.#options.static)) {
-							respondWithError(res, 'file not found: ' + path, 404);
-							return;
-						}
-						if ((await stat(filename)).isDirectory()) {
-							filename = resolve(filename, 'index.html');
-						}
-						if (existsSync(filename)) {
+					if ((this.#options.cache != true) && (this.#options.static != null)) {
+						const filename = await findFile(this.#options.static, path);
+
+						if (filename != null) {
 							await respondWithContent(
 								res,
 								{
@@ -105,11 +99,10 @@ export class Server {
 								},
 								responseConfig,
 							);
-						} else {
-							respondWithError(res, 'file not found: ' + path, 404);
 							return;
 						}
 					}
+
 
 					// check if request for cached static content
 
@@ -170,7 +163,7 @@ export class Server {
 			'application/json; charset=utf-8',
 		);
 
-		if ((this.#options.static != null) && (this.#options.noCache !== true)) {
+		if ((this.#options.static != null) && (this.#options.cache == true)) {
 			staticContent.addFolder('/', this.#options.static);
 		}
 
