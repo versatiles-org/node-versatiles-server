@@ -9,6 +9,7 @@ import type { Server as httpServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { getMimeByFilename } from './mime_types.js';
 import { findFile } from './file.js';
+import { logImportant, logInfo } from './log.js';
 
 const DIRNAME = new URL('../../', import.meta.url).pathname;
 
@@ -49,11 +50,13 @@ export class Server {
 
 				try {
 					if (req.method !== 'GET') {
+						logImportant(`Error 405: Method "${req.method}" not allowed`);
 						response.sendError('Method not allowed', 405);
 						return;
 					}
 
 					if (!(req.url ?? '')) {
+						logImportant('Error 404: URL not found');
 						response.sendError('URL not found', 404);
 						return;
 					}
@@ -68,6 +71,7 @@ export class Server {
 					};
 
 					const path = new URL(req.url ?? '', 'resolve://').pathname;
+					logInfo('new request: ' + path);
 
 					// check if tile request
 
@@ -77,9 +81,11 @@ export class Server {
 						const [_, z, x, y] = match;
 						const tileResponse = await getTile(parseInt(z, 10), parseInt(x, 10), parseInt(y, 10));
 						if (!tileResponse) {
+							logImportant('Error 404: tile not found: ' + path);
 							response.sendError('tile not found: ' + path, 404);
 							return;
 						}
+						logInfo('send tile: ' + coords.join('/'));
 						await response.sendContent(tileResponse, responseConfig);
 						return;
 					}
@@ -90,6 +96,7 @@ export class Server {
 						const filename = await findFile(this.#options.static, path);
 
 						if (filename != null) {
+							logInfo('send static file: ' + filename);
 							await response.sendContent(
 								{
 									content: await readFile(filename),
@@ -107,16 +114,18 @@ export class Server {
 
 					const contentResponse = staticContent.get(path);
 					if (contentResponse) {
+						logInfo('send cached static file');
 						await response.sendContent(contentResponse, responseConfig);
 						return;
 					}
 
 					// error 404
-
+					logImportant('Error 404: file not found: ' + path);
 					response.sendError('file not found: ' + path, 404);
 					return;
 
 				} catch (err) {
+					logImportant('Error 500: internal error: ' + String(err));
 					response.sendError(err, 500);
 					return;
 				}
@@ -131,17 +140,20 @@ export class Server {
 			r();
 		}));
 
-		console.log(`listening on port ${port}`);
+		logImportant(`listening on port ${port}`);
 	}
 
 	public async stop(): Promise<void> {
 		if (this.#server === undefined) return;
+
 		await new Promise<void>((res, rej) => {
+			logInfo('stop server');
 			this.#server?.close(err => {
 				if (err) rej(err);
 				else res();
 			});
 		});
+
 		this.#server = undefined;
 	}
 

@@ -5,6 +5,7 @@ import type { ServerOptions } from './lib/types.js';
 import open from 'open';
 import { Server } from './lib/server.js';
 import { resolve } from 'node:path';
+import { logImportant, setLogLevel } from './lib/log.js';
 
 /**
  * Entry script for the VersaTiles server command-line application.
@@ -23,19 +24,23 @@ program
 	.option('-n, --no-cache', 'disable cache and serve static files directly from disc')
 	.option('-o, --open', 'Open map in web browser')
 	.option('-p, --port <port>', 'Port to bind the server to (default: 8080)')
+	.option('-q, --quiet', 'be quiet')
 	.option('-s, --static <folder>', 'Path to a folder with static files')
 	.option('-t, --tms', 'Use TMS tile order (flip y axis)')
+	.option('-v, --verbose', 'be verbose', (_, previous) => previous + 1, 0)
 	.argument('<source>', 'VersaTiles container, can be a URL or filename of a "*.versatiles" file')
 	.action(async (source: string, cmdOptions: Record<string, unknown>) => {
 		const srvOptions: ServerOptions = {
 			baseUrl: cmdOptions.baseUrl as string | undefined,
+			cache: Boolean(cmdOptions.cache),
 			compress: Boolean(cmdOptions.compress),
 			host: String(cmdOptions.host ?? '0.0.0.0'),
-			cache: Boolean(cmdOptions.cache),
 			port: Number(cmdOptions.port ?? 8080),
 			static: cmdOptions.static != null ? resolve(process.cwd(), cmdOptions.static as string) : undefined,
 			tms: Boolean(cmdOptions.tms),
 		};
+
+		setLogLevel(Boolean(cmdOptions.quiet) ? 0 : Number(cmdOptions.verbose ?? 0) + 1);
 
 		if (!source) throw Error('source not defined');
 
@@ -48,7 +53,7 @@ program
 			}
 		} catch (error: unknown) {
 			const errorMessage = String((typeof error == 'object' && error != null && 'message' in error) ? error.message : error);
-			console.error(`Error starting the server: ${errorMessage}`);
+			logImportant(`Error starting the server: ${errorMessage}`);
 			process.exit(1);
 		}
 	});

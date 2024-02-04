@@ -29,9 +29,9 @@ describe('index.ts', () => {
 	const defaultSource = 'test.versatiles';
 	const defaultResults: ServerOptions = {
 		baseUrl: undefined,
+		cache: true,
 		compress: false,
 		host: '0.0.0.0',
-		cache: true,
 		port: 8080,
 		static: undefined,
 		tms: false,
