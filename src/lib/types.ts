@@ -1,7 +1,7 @@
 import type { Compression, Format } from '@versatiles/container';
 
 export interface ResponseContent {
-	content: Buffer;
+	buffer: Buffer;
 	mime?: string;
 	compression?: Compression;
 }

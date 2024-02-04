@@ -1,44 +1,44 @@
 import { resolve } from 'node:path';
-import { StaticContent } from './static_content.js';
+import { Cache } from './cache.js';
 import { readFileSync } from 'node:fs';
 
-describe('StaticContent', () => {
-	let staticContent: StaticContent;
+describe('Cache', () => {
+	let staticContent: Cache;
 
 	beforeEach(() => {
-		staticContent = new StaticContent();
+		staticContent = new Cache();
 	});
 
 	describe('constructor', () => {
 		it('should create an instance', () => {
-			expect(staticContent).toBeInstanceOf(StaticContent);
+			expect(staticContent).toBeInstanceOf(Cache);
 		});
 	});
 
 	describe('add method', () => {
 		it('should add text content', () => {
 			const path = '/text';
-			const content = Buffer.from('Hello World');
+			const buffer = Buffer.from('Hello World');
 			const mime = 'text/plain';
-			staticContent.addFile(path, content, mime);
-			expect(staticContent.get(path)).toEqual({ content, mime, compression: 'raw' });
+			staticContent.addBuffer(path, buffer, mime);
+			expect(staticContent.get(path)).toEqual({ buffer, mime, compression: 'raw' });
 		});
 
 		it('should serve "/index.html" under "/"', () => {
 			const path = '/index.html';
-			const content = Buffer.from('Hello World');
+			const buffer = Buffer.from('Hello World');
 			const mime = 'text/plain';
-			staticContent.addFile(path, content, mime);
-			expect(staticContent.get('/')).toEqual({ content, mime, compression: 'raw' });
+			staticContent.addBuffer(path, buffer, mime);
+			expect(staticContent.get('/')).toEqual({ buffer, mime, compression: 'raw' });
 		});
 
 		it('should serve "/data/index.html" under "/data/" and "/data"', () => {
 			const path = '/data/index.html';
-			const content = Buffer.from('Hello World');
+			const buffer = Buffer.from('Hello World');
 			const mime = 'text/plain';
-			staticContent.addFile(path, content, mime);
-			expect(staticContent.get('/data')).toEqual({ content, mime, compression: 'raw' });
-			expect(staticContent.get('/data/')).toEqual({ content, mime, compression: 'raw' });
+			staticContent.addBuffer(path, buffer, mime);
+			expect(staticContent.get('/data')).toEqual({ buffer, mime, compression: 'raw' });
+			expect(staticContent.get('/data/')).toEqual({ buffer, mime, compression: 'raw' });
 		});
 	});
 
@@ -66,7 +66,7 @@ describe('StaticContent', () => {
 			files.forEach((file: string) => {
 				const expectedPath = url + file;
 				expect(staticContent.get(expectedPath)).toEqual({
-					content: readFileSync(resolve(dir, file)),
+					buffer: readFileSync(resolve(dir, file)),
 					mime: mimeTypes.get(file.replace(/.*\./, '')),
 					compression: 'raw',
 				});

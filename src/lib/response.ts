@@ -17,7 +17,7 @@ export class Response {
 
 		const { acceptGzip, acceptBr, optimalCompression } = config;
 
-		let data = response.content;
+		let data = response.buffer;
 
 		switch (compression) {
 			case 'br':

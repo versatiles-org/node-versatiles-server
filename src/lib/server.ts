@@ -2,7 +2,7 @@ import { createServer } from 'node:http';
 import { Layer } from './layer.js';
 import { resolve as resolvePath } from 'node:path';
 import { Response } from './response.js';
-import { StaticContent } from './static_content.js';
+import { Cache } from './cache.js';
 import type { Reader } from '@versatiles/container';
 import type { ResponseConfig, ServerOptions } from './types.js';
 import type { Server as httpServer } from 'node:http';
@@ -27,10 +27,10 @@ export class Server {
 
 		Object.assign(this.#options, options);
 
-		this.#options.compress ??= true;
 		this.#options.port ??= 8080;
-		this.#options.host ??= '0.0.0.0';
 		this.#options.baseUrl ??= `http://localhost:${this.#options.port}/`;
+		this.#options.compress ??= true;
+		this.#options.host ??= '0.0.0.0';
 
 		this.#layer = new Layer(source, options);
 	}
@@ -79,7 +79,8 @@ export class Server {
 					if (match) {
 						// eslint-disable-next-line @typescript-eslint/no-unused-vars
 						const [_, z, x, y] = match;
-						const tileResponse = await getTile(parseInt(z, 10), parseInt(x, 10), parseInt(y, 10));
+						const coords: [number, number, number] = [parseInt(z, 10), parseInt(x, 10), parseInt(y, 10)];
+						const tileResponse = await getTile(...coords);
 						if (!tileResponse) {
 							logImportant('Error 404: tile not found: ' + path);
 							response.sendError('tile not found: ' + path, 404);
@@ -99,7 +100,7 @@ export class Server {
 							logInfo('send static file: ' + filename);
 							await response.sendContent(
 								{
-									content: await readFile(filename),
+									buffer: await readFile(filename),
 									compression: 'raw',
 									mime: getMimeByFilename(filename),
 								},
@@ -157,18 +158,18 @@ export class Server {
 		this.#server = undefined;
 	}
 
-	async #buildStaticContent(): Promise<StaticContent> {
-		const staticContent = new StaticContent();
+	async #buildStaticContent(): Promise<Cache> {
+		const staticContent = new Cache();
 
 		staticContent.addFolder('/', resolvePath(DIRNAME, 'static'));
 
-		staticContent.addFile(
+		staticContent.addBuffer(
 			'/tiles/style.json',
 			Buffer.from(await this.#layer.getStyle(this.#options)),
 			'application/json; charset=utf-8',
 		);
 
-		staticContent.addFile(
+		staticContent.addBuffer(
 			'/tiles/meta.json',
 			Buffer.from(await this.#layer.getMetadata() ?? ''),
 			'application/json; charset=utf-8',

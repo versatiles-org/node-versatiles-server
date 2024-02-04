@@ -35,9 +35,9 @@ export class Layer {
 		const compression = this.#compression;
 
 		return async (z: number, x: number, y: number): Promise<ResponseContent | null> => {
-			const content = await container.getTile(z, x, y);
-			if (!content) return null;
-			return { content, mime, compression };
+			const buffer = await container.getTile(z, x, y);
+			if (!buffer) return null;
+			return { buffer, mime, compression };
 		};
 	}
 

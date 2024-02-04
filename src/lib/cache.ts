@@ -3,6 +3,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { ResponseContent } from './types.js';
 import { getMimeByFilename } from './mime_types.js';
+import { logDebug } from './log.js';
 
 
 /**
@@ -11,7 +12,7 @@ import { getMimeByFilename } from './mime_types.js';
  * It also supports adding the contents of an entire directory, automatically handling MIME types
  * and optional compression. This class is useful for serving static files in a web server context.
  */
-export class StaticContent {
+export class Cache {
 	readonly #map: Map<string, ResponseContent>;
 
 	/**
@@ -46,21 +47,22 @@ export class StaticContent {
 	/**
 	 * Adds a new static response to the map.
 	 * @param path - The path where the static response will be accessible.
-	 * @param content - The content to serve, can be content as a Buffer or path as a string.
+	 * @param buffer - The content to serve as a Buffer.
 	 * @param mime - The MIME type of the content.
 	 * @param compression - The compression method used, if any.
 	 * @throws Will throw an error if the path already exists in the map.
 	 */
 	// eslint-disable-next-line @typescript-eslint/max-params
-	public addFile(path: string, content: Buffer, mime: string, compression: Compression = 'raw'): void {
-		this.#map.set(path, { content, mime, compression });
+	public addBuffer(path: string, buffer: Buffer, mime: string, compression: Compression = 'raw'): void {
+		logDebug('add to cache: ' + path);
+		this.#map.set(path, { buffer, mime, compression });
 
 		if (path.endsWith('/index.html')) {
 			path = path.replace(/index\.html$/, '');
-			this.#map.set(path, { content, mime, compression });
+			this.#map.set(path, { buffer, mime, compression });
 			if (path.length > 2) {
 				path = path.replace(/\/$/, '');
-				this.#map.set(path, { content, mime, compression });
+				this.#map.set(path, { buffer, mime, compression });
 			}
 		}
 	}
@@ -71,13 +73,14 @@ export class StaticContent {
 	 * @param dir - The directory whose contents should be added.
 	 */
 	public addFolder(url: string, dir: string): void {
+		logDebug('cache static files from folder: ' + dir);
 		if (!existsSync(dir)) return;
 
 		readdirSync(dir).forEach(name => {
 			if (name.startsWith('.')) return;
 
 			const subDir = resolve(dir, name);
-			let subUrl = StaticContent.urlResolve(url, name);
+			let subUrl = Cache.urlResolve(url, name);
 
 			if (statSync(subDir).isDirectory()) {
 				this.addFolder(subUrl, subDir);
@@ -96,7 +99,7 @@ export class StaticContent {
 					subUrl = subUrl.replace(/\.[^.]+$/, '');
 				}
 
-				this.addFile(subUrl, readFileSync(subDir), getMimeByFilename(name, true), compression);
+				this.addBuffer(subUrl, readFileSync(subDir), getMimeByFilename(name, true), compression);
 			}
 		});
 	}

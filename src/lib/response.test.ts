@@ -30,7 +30,7 @@ describe('Response Tests', () => {
 
 	describe('respond with content', () => {
 		it('should set correct headers and respond with content', async () => {
-			const content = { content: Buffer.from('test'), mime: 'text/plain' };
+			const content = { buffer: Buffer.from('test'), mime: 'text/plain' };
 			const config = { acceptGzip: true, acceptBr: false, optimalCompression: false };
 
 			await response.sendContent(content, config);
@@ -41,7 +41,7 @@ describe('Response Tests', () => {
 		});
 
 		it('should set correct mime if missing', async () => {
-			const content = { content: Buffer.from('test') };
+			const content = { buffer: Buffer.from('test') };
 			const config = { acceptGzip: true, acceptBr: false, optimalCompression: false };
 
 			await response.sendContent(content, config);
@@ -98,7 +98,7 @@ describe('Response Tests', () => {
 			// eslint-disable-next-line @typescript-eslint/no-loop-func
 			it(`${buffer} -> ${accept} (${optimal ? 'optimal' : 'fast'})`, async () => {
 				const content: ResponseContent = {
-					content: buffers[buffer],
+					buffer: buffers[buffer],
 					mime: 'text/plain',
 					compression: buffer,
 				};
