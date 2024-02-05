@@ -1,5 +1,10 @@
-import { getMimeByFilename } from './mime_types.js'; // Replace with the actual path of your module
 import { jest } from '@jest/globals';
+
+jest.unstable_mockModule('./log.js', () => ({
+	logImportant: jest.fn(),
+}));
+const { logImportant } = await import('./log.js');
+const { getMimeByFilename } = await import('./mime_types.js');
 
 describe('MIME Type Tests', () => {
 	describe('getMimeByFilename', () => {
@@ -22,10 +27,9 @@ describe('MIME Type Tests', () => {
 		});
 
 		it('should return default MIME type for filenames with invalid extensions', () => {
-			const consoleSpy = jest.spyOn(console, 'warn').mockReturnValue();
+			jest.mocked(logImportant).mockClear();
 			expect(getMimeByFilename('file.unknown', true)).toBe('application/octet-stream');
-			expect(consoleSpy).toHaveBeenCalledWith('can not guess MIME for file: file.unknown');
-			consoleSpy.mockRestore();
+			expect(logImportant).toHaveBeenCalledWith('Error: can not guess MIME for file: file.unknown');
 		});
 
 		it('should handle filenames with no extension', () => {

@@ -1,3 +1,4 @@
+import { logImportant } from './log.js';
 
 const MIMETYPES = new Map([
 	['avif', 'image/avif'],
@@ -21,7 +22,7 @@ export function getMimeByFilename(filename: string, warn?: boolean): string {
 	const format = filename.replace(/.*\./, '').toLowerCase();
 
 	if ((warn === true) && !MIMETYPES.has(format)) {
-		console.warn('can not guess MIME for file: ' + filename);
+		logImportant('Error: can not guess MIME for file: ' + filename);
 	}
 
 	return MIMETYPES.get(format) ?? 'application/octet-stream';
