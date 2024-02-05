@@ -15,7 +15,7 @@ describe('Cache', () => {
 		});
 	});
 
-	describe('add method', () => {
+	describe('addBuffer', () => {
 		it('should add text content', () => {
 			const path = '/text';
 			const buffer = Buffer.from('Hello World');
@@ -42,7 +42,7 @@ describe('Cache', () => {
 		});
 	});
 
-	describe('addFolder method', () => {
+	describe('addFolder', () => {
 		it('should add files from a folder', () => {
 			const url = '/';
 			const dir = new URL('../../static', import.meta.url).pathname;
