@@ -46,9 +46,14 @@ Options:
                            take longer. Perfect if behind CDN.
   -h, --host <hostnameip>  Hostname or IP to bind the server to (default:
                            "0.0.0.0")
+  -n, --no-cache           disable cache and serve static files directly from
+                           disc
   -o, --open               Open map in web browser
   -p, --port <port>        Port to bind the server to (default: 8080)
+  -q, --quiet              be quiet
+  -s, --static <folder>    Path to a folder with static files
   -t, --tms                Use TMS tile order (flip y axis)
+  -v, --verbose            be verbose
   --help                   display help for command
 ```
 
