@@ -58,6 +58,4 @@ program
 		}
 	});
 
-if (process.env.NODE_ENV !== 'test') {
-	program.parse();
-}
+program.parse();
