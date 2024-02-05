@@ -1,11 +1,21 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { readFileSync } from 'fs';
-import { Server } from './server.js';
+import { readFileSync } from 'node:fs';
 import { jest } from '@jest/globals';
 import { createHash } from 'node:crypto';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
+import type { Server } from './server.js';
 
 const DIRNAME = new URL('../../', import.meta.url).pathname;
+
+
+jest.unstable_mockModule('./log.js', () => ({
+	logDebug: jest.fn(),
+	logImportant: jest.fn(),
+	logInfo: jest.fn(),
+}));
+const { logImportant } = await import('./log.js');
+const { Server: ServerClass } = await import('./server.js');
+
 
 describe('Server', () => {
 	let server: Server;
@@ -14,10 +24,9 @@ describe('Server', () => {
 	const indexContent = readFileSync(resolve(DIRNAME, 'static/index.html'), 'utf8');
 
 	beforeAll(async () => {
-		const log = jest.spyOn(console, 'log').mockReturnValue();
-		server = new Server(resolve(DIRNAME, 'testdata/island.versatiles'), { port, compress: true });
+		server = new ServerClass(resolve(DIRNAME, 'testdata/island.versatiles'), { port, compress: true });
 		await server.start();
-		expect(log).toHaveBeenCalledWith('listening on port ' + port);
+		expect(logImportant).toHaveBeenCalledWith('listening on port ' + port);
 	});
 
 	afterEach(() => {
@@ -65,11 +74,10 @@ describe('Server', () => {
 	});
 
 	it('should respond with 404 for unknown content', async () => {
-		const error = jest.spyOn(console, 'error').mockReturnValue();
 		const response = await fetch(`${baseUrl}/nonexistent.file`);
 
 		expect(response.status).toBe(404);
-		expect(error).toHaveBeenCalledWith('file not found: /nonexistent.file');
+		expect(logImportant).toHaveBeenCalledWith('file not found: /nonexistent.file');
 	});
 
 	it('should serve tile data correctly 1/2', async () => {
@@ -89,31 +97,28 @@ describe('Server', () => {
 	});
 
 	it('should throw error on missing tiles 1/2', async () => {
-		const error = jest.spyOn(console, 'error').mockReturnValue();
 		const response = await fetch(`${baseUrl}/tiles/0/0/0`);
 
 		expect(response.status).toBe(404);
 		expect(response.headers.get('content-type')).toBe('text/plain');
 		expect(await response.text()).toBe('tile not found: /tiles/0/0/0');
-		expect(error).toHaveBeenCalledWith('tile not found: /tiles/0/0/0');
+		expect(logImportant).toHaveBeenCalledWith('tile not found: /tiles/0/0/0');
 	});
 
 	it('should throw error on missing tiles 2/2', async () => {
-		const error = jest.spyOn(console, 'error').mockReturnValue();
 		const response = await fetch(`${baseUrl}/tiles/12/34/56`);
 
 		expect(response.status).toBe(404);
 		expect(response.headers.get('content-type')).toBe('text/plain');
 		expect(await response.text()).toBe('tile not found: /tiles/12/34/56');
-		expect(error).toHaveBeenCalledWith('tile not found: /tiles/12/34/56');
+		expect(logImportant).toHaveBeenCalledWith('tile not found: /tiles/12/34/56');
 	});
 
 	it('should handle unsupported HTTP methods with 405', async () => {
-		const error = jest.spyOn(console, 'error').mockReturnValue();
 		const response = await fetch(`${baseUrl}/index.html`, { method: 'POST' });
 
 		expect(response.status).toBe(405);
-		expect(error).toHaveBeenCalledWith('Method not allowed');
+		expect(logImportant).toHaveBeenCalledWith('Method not allowed');
 	});
 
 	it('should serve dynamic JSON content correctly', async () => {
