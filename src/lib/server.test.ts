@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { readFileSync } from 'node:fs';
 import { jest } from '@jest/globals';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import type { Server } from './server.js';
+import type { ResponseContent } from './types.js';
 
 const DIRNAME = new URL('../../', import.meta.url).pathname;
 
@@ -13,13 +15,17 @@ jest.unstable_mockModule('./log.js', () => ({
 	logImportant: jest.fn(),
 	logInfo: jest.fn(),
 }));
+jest.unstable_mockModule('./file.js', () => ({
+	getFileContent: jest.fn(),
+}));
 const { logImportant } = await import('./log.js');
+const { getFileContent } = await import('./file.js');
 const { Server: ServerClass } = await import('./server.js');
 
 
 describe('Server', () => {
 	let server: Server;
-	const port = 56789; // Ensure this port is free on the machine running the test
+	const port = 56788;
 	const baseUrl = `http://localhost:${port}`;
 	const indexContent = readFileSync(resolve(DIRNAME, 'static/index.html'), 'utf8');
 
@@ -36,6 +42,11 @@ describe('Server', () => {
 	afterAll(async () => {
 		await server.stop();
 	});
+
+	it('getUrl', async () => {
+		expect(server.getUrl()).toBe(baseUrl + '/');
+	});
+
 
 	it('should serve static content', async () => {
 		const response = await fetch(`${baseUrl}/index.html`, {
@@ -148,6 +159,44 @@ describe('Server', () => {
 			paint: { 'background-color': '#f9f4ee' },
 			type: 'background',
 		});
+	});
+});
+
+describe('static files', () => {
+	let server: Server;
+	const port = 56789;
+	const baseUrl = `http://localhost:${port}`;
+
+	beforeAll(async () => {
+		server = new ServerClass(
+			resolve(DIRNAME, 'testdata/island.versatiles'),
+			{ port, cache: false, static: resolve(DIRNAME) },
+		);
+		await server.start();
+	});
+
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+
+	afterAll(async () => {
+		await server.stop();
+	});
+
+	it('should serve static files correctly', async () => {
+		jest.mocked(getFileContent).mockImplementationOnce(async (staticFolder: string, path: string): Promise<ResponseContent> => ({
+			buffer: Buffer.from(JSON.stringify({ staticFolder, path })),
+			mime: 'text/html; charset=utf-8',
+		}));
+		const response = await fetch(`${baseUrl}/static`);
+
+		expect(response.status).toBe(200);
+		expect(response.headers.get('content-type')).toBe('text/html; charset=utf-8');
+
+		// @ts-expect-error: yes
+		const { staticFolder, path } = await response.json();
+		expect(staticFolder).toBe(resolve(DIRNAME));
+		expect(path).toBe('/static');
 	});
 });
 
