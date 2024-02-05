@@ -6,10 +6,8 @@ import { Cache } from './cache.js';
 import type { Reader } from '@versatiles/container';
 import type { ResponseConfig, ServerOptions } from './types.js';
 import type { Server as httpServer } from 'node:http';
-import { readFile } from 'node:fs/promises';
-import { getMimeByFilename } from './mime_types.js';
-import { findFile } from './file.js';
-import { logImportant, logInfo } from './log.js';
+import { getFileContent } from './file.js';
+import { logDebug, logImportant, logInfo } from './log.js';
 
 const DIRNAME = new URL('../../', import.meta.url).pathname;
 
@@ -94,18 +92,11 @@ export class Server {
 					// check if request for static content
 
 					if ((this.#options.cache != true) && (this.#options.static != null)) {
-						const filename = await findFile(this.#options.static, path);
+						const content = await getFileContent(this.#options.static, path);
 
-						if (filename != null) {
-							logInfo('send static file: ' + filename);
-							await response.sendContent(
-								{
-									buffer: await readFile(filename),
-									compression: 'raw',
-									mime: getMimeByFilename(filename),
-								},
-								responseConfig,
-							);
+						if (content != null) {
+							logDebug('send static file');
+							await response.sendContent(content, responseConfig);
 							return;
 						}
 					}
@@ -115,7 +106,7 @@ export class Server {
 
 					const contentResponse = staticContent.get(path);
 					if (contentResponse) {
-						logInfo('send cached static file');
+						logDebug('send cached static file');
 						await response.sendContent(contentResponse, responseConfig);
 						return;
 					}
