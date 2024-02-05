@@ -2,6 +2,7 @@ import type { Compression } from '@versatiles/container';
 import type { ServerResponse } from 'http';
 import { brotli, gzip, unbrotli, ungzip } from './compressors.js';
 import type { ResponseConfig, ResponseContent } from './types.js';
+import { logImportant } from './log.js';
 
 
 export class Response {
@@ -63,7 +64,7 @@ export class Response {
 	}
 
 	public sendError(err: unknown, code = 500): void {
-		console.error(err);
+		logImportant(String(err));
 		this.#response.statusCode = code;
 		this.#response.setHeader('content-type', 'text/plain');
 		this.#response.end(String(err));

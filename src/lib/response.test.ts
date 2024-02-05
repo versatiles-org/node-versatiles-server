@@ -1,10 +1,18 @@
-/* eslint-disable @typescript-eslint/unbound-method */
+/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/unbound-method */
 import { IncomingMessage, ServerResponse } from 'http';
-import { Response } from './response.js';
 import { Socket } from 'net';
 import { jest } from '@jest/globals';
 import type { ResponseContent } from './types.js';
+import type { Response } from './response.js';
 import { brotliCompressSync, gzipSync } from 'zlib';
+
+
+jest.unstable_mockModule('./log.js', () => ({
+	logImportant: jest.fn(),
+}));
+const { logImportant } = await import('./log.js');
+const { Response: ResponseClass } = await import('./response.js');
+
 
 type Compression = 'br' | 'gzip' | 'raw';
 
@@ -21,7 +29,7 @@ describe('Response Tests', () => {
 		jest.spyOn(console, 'error').mockImplementation(() => {
 			return;
 		});
-		response = new Response(mockRes);
+		response = new ResponseClass(mockRes);
 	});
 
 	afterEach(() => {
@@ -142,7 +150,7 @@ describe('Response Tests', () => {
 			const error = new Error('Test error');
 			response.sendError(error, 500);
 
-			expect(console.error).toHaveBeenCalledWith(error);
+			expect(logImportant).toHaveBeenCalledWith('Error: Test error');
 			expect(mockRes.setHeader).toHaveBeenCalledWith('content-type', 'text/plain');
 			expect(mockRes.statusCode).toBe(500);
 			expect(mockRes.end).toHaveBeenCalledWith('Error: Test error');
