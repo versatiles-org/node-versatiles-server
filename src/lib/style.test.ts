@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
+import type { TileJSONOption } from '@versatiles/style/dist/lib/types.js';
 import type { ContainerInfo } from './types.js';
 import { jest } from '@jest/globals';
 
@@ -11,51 +12,87 @@ jest.unstable_mockModule('@versatiles/style', () => ({
 const { guessStyle } = await import('@versatiles/style');
 const { generateStyle } = await import('./style.js');
 
-// Describing the test suite
-describe('generateStyle', () => {
-	const options = {
-		port: 3000,
-		baseUrl: 'http://localhost:3000/',
-		tilesUrl: 'http://example.com/tiles/{z}/{x}/{y}',
-	};
+const options = {
+	port: 3000,
+	baseUrl: 'http://localhost:3000/',
+	tilesUrl: 'http://example.com/tiles/{z}/{x}/{y}',
+};
 
+describe('generateStyle for some formats', () => {
 	beforeEach(() => {
 		jest.mocked(guessStyle).mockReset();
 	});
 
-	it('generates a style for png tiles', () => {
-		generateStyle({
-			header: { tileFormat: 'png', bbox: [0, 0, 10, 10] },
-		}, options);
-
-		// Verify that guessStyle was called with the correct arguments
-		expect(guessStyle).toHaveBeenCalledWith({
-			format: 'png',
-			tiles: ['http://example.com/tiles/{z}/{x}/{y}'],
-			baseUrl: 'http://localhost:3000/',
-			bounds: [0, 0, 10, 10],
-		});
+	it('generates a style for avif tiles', () => {
+		generateStyle(getContainerInfo('avif'), options);
+		expect(guessStyle).toHaveBeenCalledWith(getTileJSONOptions('avif'));
 	});
 
 	it('generates a style for jpeg tiles', () => {
-		generateStyle({
-			header: { tileFormat: 'jpeg', bbox: [0, 0, 10, 10] },
-		}, options);
+		generateStyle(getContainerInfo('jpeg'), options);
+		expect(guessStyle).toHaveBeenCalledWith(getTileJSONOptions('jpg'));
+	});
 
-		// Verify that guessStyle was called with the correct arguments
-		expect(guessStyle).toHaveBeenCalledWith({
-			format: 'jpg',
+	it('generates a style for png tiles', () => {
+		generateStyle(getContainerInfo('png'), options);
+		expect(guessStyle).toHaveBeenCalledWith(getTileJSONOptions('png'));
+	});
+
+	it('generates a style for webp tiles', () => {
+		generateStyle(getContainerInfo('webp'), options);
+		expect(guessStyle).toHaveBeenCalledWith(getTileJSONOptions('webp'));
+	});
+
+
+	it('throws an error for bin tile formats', () => {
+		expect(() => generateStyle(getContainerInfo('bin'), options))
+			.toThrow('unsupported tile format bin');
+	});
+
+	it('throws an error for geojson tile formats', () => {
+		expect(() => generateStyle(getContainerInfo('geojson'), options))
+			.toThrow('unsupported tile format geojson');
+	});
+
+	it('throws an error for json tile formats', () => {
+		expect(() => generateStyle(getContainerInfo('json'), options))
+			.toThrow('unsupported tile format json');
+	});
+
+	it('throws an error for svg tile formats', () => {
+		expect(() => generateStyle(getContainerInfo('svg'), options))
+			.toThrow('unsupported tile format svg');
+	});
+
+	it('throws an error for topojson tile formats', () => {
+		expect(() => generateStyle(getContainerInfo('topojson'), options))
+			.toThrow('unsupported tile format topojson');
+	});
+
+	it('throws an error for unknown tile formats', () => {
+		expect(() => generateStyle(getContainerInfo('unknown_format'), options))
+			.toThrow('unknown tile format unknown_format');
+	});
+
+
+	function getContainerInfo(tileFormat: string): ContainerInfo {
+		// @ts-expect-error allow any tileFormat
+		return { header: { tileFormat, bbox: [0, 0, 10, 10] } };
+	}
+
+	function getTileJSONOptions(format: 'avif' | 'jpg' | 'pbf' | 'png' | 'webp'): TileJSONOption {
+		return {
+			format,
 			tiles: ['http://example.com/tiles/{z}/{x}/{y}'],
 			baseUrl: 'http://localhost:3000/',
 			bounds: [0, 0, 10, 10],
-		});
-	});
+		};
+	}
+});
 
-	it('throws an error on invalid metadata', () => {
-		expect(() => generateStyle({
-			header: { tileFormat: 'pbf', bbox: [0, 0, 10, 10] },
-			metadata: '#',
-		}, options)).toThrow('invalid metadata');
+describe('generateStyle for vector tiles', () => {
+	beforeEach(() => {
+		jest.mocked(guessStyle).mockReset();
 	});
 
 	it('generates a style for pbf tiles', () => {
@@ -74,28 +111,15 @@ describe('generateStyle', () => {
 		});
 	});
 
-	// Handling error for unsupported tile format
-	it('throws an error for unknown tile formats', () => {
-		const containerInfo: ContainerInfo = {
-			// @ts-expect-error unknown format
-			header: { tileFormat: 'unknown_format', bbox: [0, 0, 10, 10] },
-			metadata: '{}',
-		};
-
-		expect(() => generateStyle(containerInfo, options)).toThrow('unknown tile format unknown_format');
+	it('throws an error on invalid metadata', () => {
+		expect(() => generateStyle({
+			header: { tileFormat: 'pbf', bbox: [0, 0, 10, 10] },
+			metadata: '#',
+		}, options)).toThrow('invalid metadata');
 	});
+});
 
-	// Handling error for unsupported tile format
-	it('throws an error for geojson tile formats', () => {
-		const containerInfo: ContainerInfo = {
-			header: { tileFormat: 'geojson', bbox: [0, 0, 10, 10] },
-			metadata: '{}',
-		};
-
-		expect(() => generateStyle(containerInfo, options)).toThrow('unsupported tile format geojson');
-	});
-
-
+describe('error handling of generateStyle', () => {
 	it('throws an error on invalid port number', () => {
 		expect(() => generateStyle({
 			header: { tileFormat: 'pbf', bbox: [0, 0, 10, 10] },
