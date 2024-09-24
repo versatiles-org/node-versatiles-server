@@ -44,9 +44,9 @@ describe('Layer class', () => {
 			expect(info).toBeDefined();
 			expect(info.header).toMatchObject(expectedHeader);
 
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+			 
 			const metadata = JSON.parse(info.metadata ?? '');
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			 
 			expect(metadata?.vector_layers?.length).toBe(26);
 		});
 	});
@@ -63,9 +63,9 @@ describe('Layer class', () => {
 
 	describe('getMetadata', () => {
 		it('should return the correct metadata', async () => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+			 
 			const metadata = JSON.parse(await layer.getMetadata() ?? '');
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			 
 			expect(metadata?.vector_layers?.length).toBe(26);
 		});
 	});

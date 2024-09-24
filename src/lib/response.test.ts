@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/unbound-method */
+ 
 import { IncomingMessage, ServerResponse } from 'http';
 import { Socket } from 'net';
 import { jest } from '@jest/globals';
@@ -103,7 +103,7 @@ describe('Response Tests', () => {
 		];
 
 		for (const { buffer, accept, optimal, result } of cases) {
-			// eslint-disable-next-line @typescript-eslint/no-loop-func
+			 
 			it(`${buffer} -> ${accept} (${optimal ? 'optimal' : 'fast'})`, async () => {
 				const content: ResponseContent = {
 					buffer: buffers[buffer],

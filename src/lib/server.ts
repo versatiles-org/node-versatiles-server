@@ -20,7 +20,7 @@ export class Server {
 	#server?: httpServer;
 
 	public constructor(source: Reader | string, options: ServerOptions) {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		 
 		if (source == null) throw Error('source not defined');
 
 		Object.assign(this.#options, options);
@@ -75,7 +75,7 @@ export class Server {
 
 					const match = /^\/tiles\/([0-9]+)\/([0-9]+)\/([0-9]+).*/.exec(path);
 					if (match) {
-						// eslint-disable-next-line @typescript-eslint/no-unused-vars
+						 
 						const [_, z, x, y] = match;
 						const coords: [number, number, number] = [parseInt(z, 10), parseInt(x, 10), parseInt(y, 10)];
 						const tileResponse = await getTile(...coords);

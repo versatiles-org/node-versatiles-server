@@ -40,7 +40,7 @@ program
 			tms: Boolean(cmdOptions.tms),
 		};
 
-		setLogLevel(Boolean(cmdOptions.quiet) ? 0 : Number(cmdOptions.verbose ?? 0) + 1);
+		setLogLevel(cmdOptions.quiet ? 0 : Number(cmdOptions.verbose ?? 0) + 1);
 
 		if (!source) throw Error('source not defined');
 
@@ -48,7 +48,7 @@ program
 			const server = new Server(source, srvOptions);
 			void server.start();
 
-			if (Boolean(cmdOptions.open)) {
+			if (cmdOptions.open) {
 				await open(server.getUrl());
 			}
 		} catch (error: unknown) {

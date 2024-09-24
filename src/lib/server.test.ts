@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/naming-convention */
+ 
+ 
 import { readFileSync } from 'node:fs';
 import { jest } from '@jest/globals';
 import { createHash } from 'node:crypto';

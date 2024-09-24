@@ -52,7 +52,7 @@ export class Cache {
 	 * @param compression - The compression method used, if any.
 	 * @throws Will throw an error if the path already exists in the map.
 	 */
-	// eslint-disable-next-line @typescript-eslint/max-params
+	 
 	public addBuffer(path: string, buffer: Buffer, mime: string, compression: Compression = 'raw'): void {
 		logDebug('add to cache: ' + path);
 		this.#map.set(path, { buffer, mime, compression });

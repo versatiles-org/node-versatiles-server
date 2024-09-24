@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+ 
 
 import type { TileJSONOption } from '@versatiles/style/dist/lib/types.js';
 import type { ContainerInfo } from './types.js';

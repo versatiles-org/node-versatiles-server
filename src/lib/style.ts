@@ -43,10 +43,10 @@ export function generateStyle(containerInfo: ContainerInfo, options: ServerOptio
 	};
 	try {
 		if (metadata != null) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+			 
 			input.vectorLayers = JSON.parse(metadata)?.vector_layers;
 		}
-	} catch (e) {
+	} catch (_) {
 		throw Error('invalid metadata');
 	}
 
