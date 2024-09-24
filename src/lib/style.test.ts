@@ -1,6 +1,4 @@
- 
-
-import type { TileJSONOption } from '@versatiles/style/dist/lib/types.js';
+ import { GuessStyleOptions } from '@versatiles/style';
 import type { ContainerInfo } from './types.js';
 import { jest } from '@jest/globals';
 
@@ -80,7 +78,7 @@ describe('generateStyle for some formats', () => {
 		return { header: { tileFormat, bbox: [0, 0, 10, 10] } };
 	}
 
-	function getTileJSONOptions(format: 'avif' | 'jpg' | 'pbf' | 'png' | 'webp'): TileJSONOption {
+	function getTileJSONOptions(format: 'avif' | 'jpg' | 'pbf' | 'png' | 'webp'): GuessStyleOptions {
 		return {
 			format,
 			tiles: ['http://example.com/tiles/{z}/{x}/{y}'],

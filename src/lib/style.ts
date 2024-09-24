@@ -1,6 +1,5 @@
-import { guessStyle } from '@versatiles/style';
+import { guessStyle, GuessStyleOptions } from '@versatiles/style';
 import type { ContainerInfo, ServerOptions } from './types.js';
-import type { TileJSONOption } from '@versatiles/style/dist/lib/types.js';
 
 /**
  * Asynchronously generates a style string based on the given container and options.
@@ -16,7 +15,7 @@ export function generateStyle(containerInfo: ContainerInfo, options: ServerOptio
 	const { tileFormat } = containerInfo.header;
 	let format: 'avif' | 'jpg' | 'pbf' | 'png' | 'webp';
 	switch (tileFormat) {
-		case 'jpeg': format = 'jpg'; break;
+		case 'jpg':
 		case 'avif':
 		case 'png':
 		case 'webp':
@@ -35,7 +34,7 @@ export function generateStyle(containerInfo: ContainerInfo, options: ServerOptio
 	const { header, metadata } = containerInfo;
 
 
-	const input: TileJSONOption = {
+	const input: GuessStyleOptions = {
 		format,
 		tiles: [options.tilesUrl ?? '/tiles/{z}/{x}/{y}'],
 		baseUrl,
