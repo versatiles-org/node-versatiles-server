@@ -1,12 +1,10 @@
-import type { JestConfigWithTsJest } from 'ts-jest';
-
-const config: JestConfigWithTsJest = {
+export default {
 	verbose: true,
 	testEnvironment: 'node',
 	transform: {
 		'^.+\\.ts$': ['ts-jest', { useESM: true }]
 	},
-	testMatch: [ 
+	testMatch: [
 		'**/src/**/*.test.ts',
 		'!**/src/**/*.mock.test.ts',
 	],
@@ -22,5 +20,3 @@ const config: JestConfigWithTsJest = {
 		'!jest*.ts',
 	]
 }
-
-export default config;
