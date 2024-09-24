@@ -15,6 +15,8 @@ export function generateStyle(containerInfo: ContainerInfo, options: ServerOptio
 	const { tileFormat } = containerInfo.header;
 	let format: 'avif' | 'jpg' | 'pbf' | 'png' | 'webp';
 	switch (tileFormat) {
+		// @ts-expect-error: check for wrong tile format
+		case 'jpeg': format = 'jpg'; break;
 		case 'jpg':
 		case 'avif':
 		case 'png':
@@ -42,7 +44,7 @@ export function generateStyle(containerInfo: ContainerInfo, options: ServerOptio
 	};
 	try {
 		if (metadata != null) {
-			 
+
 			input.vectorLayers = JSON.parse(metadata)?.vector_layers;
 		}
 	} catch (_) {
