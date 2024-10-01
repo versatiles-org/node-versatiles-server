@@ -64,9 +64,20 @@ export class Response {
 	}
 
 	public sendError(err: unknown, code = 500): void {
-		logImportant(String(err));
+		let message: string;
+		if (typeof err == 'string') {
+			message = err;
+		} else if (typeof err !== 'object' || err == null) {
+			message = String(err);
+		} else if (typeof err.toString == 'function') {
+			message = err.toString();
+		} else {
+			message = 'unknown object'
+		}
+		
+		logImportant(message);
 		this.#response.statusCode = code;
 		this.#response.setHeader('content-type', 'text/plain');
-		this.#response.end(String(err));
+		this.#response.end(message);
 	}
 }
