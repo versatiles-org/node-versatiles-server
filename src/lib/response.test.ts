@@ -147,13 +147,22 @@ describe('Response Tests', () => {
 
 	describe('respond with error', () => {
 		it('should handle error responses', () => {
-			const error = new Error('Test error');
+			const error = new Error('Test Error');
 			response.sendError(error, 500);
 
-			expect(logImportant).toHaveBeenCalledWith('Error: Test error');
+			expect(logImportant).toHaveBeenCalledWith('Error: Test Error');
 			expect(mockRes.setHeader).toHaveBeenCalledWith('content-type', 'text/plain');
 			expect(mockRes.statusCode).toBe(500);
-			expect(mockRes.end).toHaveBeenCalledWith('Error: Test error');
+			expect(mockRes.end).toHaveBeenCalledWith('internal error');
+		});
+
+		it('should handle error messages', () => {
+			response.sendError('message', 500);
+
+			expect(logImportant).toHaveBeenCalledWith('message');
+			expect(mockRes.setHeader).toHaveBeenCalledWith('content-type', 'text/plain');
+			expect(mockRes.statusCode).toBe(500);
+			expect(mockRes.end).toHaveBeenCalledWith('message');
 		});
 	});
 });
