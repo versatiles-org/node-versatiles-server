@@ -67,10 +67,9 @@ export class Server {
 					logInfo('new request: ' + path);
 
 					// check if tile request
+					const match = /^\/tiles\/default\/([0-9]+)\/([0-9]+)\/([0-9]+).*/.exec(path);
 
-					const match = /^\/tiles\/([0-9]+)\/([0-9]+)\/([0-9]+).*/.exec(path);
 					if (match) {
-						 
 						const [_, z, x, y] = match;
 						const coords: [number, number, number] = [parseInt(z, 10), parseInt(x, 10), parseInt(y, 10)];
 						const tileResponse = await getTile(...coords);
@@ -84,6 +83,15 @@ export class Server {
 						return;
 					}
 
+					if (path == '/tiles/default/meta.json') {
+						return await response.sendJSONString(await this.#layer.getMetadata() ?? '', responseConfig);
+					}
+
+					if (path == '/tiles/index.json') {
+						return await response.sendJSONString('["default"]', responseConfig);
+					}
+
+					// check if request for user defined static content
 					if (this.#options.static != null) {
 						const content = await getFileContent(this.#options.static, path);
 
