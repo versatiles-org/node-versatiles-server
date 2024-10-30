@@ -83,7 +83,7 @@ export class Server {
 						return;
 					}
 
-					if (path == '/tiles/default/meta.json') {
+					if (path == '/tiles/default/tiles.json') {
 						return await response.sendJSONString(await this.#layer.getMetadata() ?? '', responseConfig);
 					}
 
