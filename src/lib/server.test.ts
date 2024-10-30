@@ -1,11 +1,8 @@
- 
- 
 import { readFileSync } from 'node:fs';
 import { jest } from '@jest/globals';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import type { Server } from './server.js';
-import type { ResponseContent } from './types.js';
 
 const DIRNAME = new URL('../../', import.meta.url).pathname;
 
@@ -15,11 +12,7 @@ jest.unstable_mockModule('./log.js', () => ({
 	logImportant: jest.fn(),
 	logInfo: jest.fn(),
 }));
-jest.unstable_mockModule('./file.js', () => ({
-	getFileContent: jest.fn(),
-}));
 const { logImportant } = await import('./log.js');
-const { getFileContent } = await import('./file.js');
 const { Server: ServerClass } = await import('./server.js');
 
 
@@ -92,7 +85,7 @@ describe('Server', () => {
 	});
 
 	it('should serve tile data correctly 1/2', async () => {
-		const response = await fetch(`${baseUrl}/tiles/8/55/67`);
+		const response = await fetch(`${baseUrl}/tiles/default/8/55/67`);
 
 		expect(response.status).toBe(200);
 		expect(response.headers.get('content-type')).toBe('application/x-protobuf');
@@ -100,7 +93,7 @@ describe('Server', () => {
 	});
 
 	it('should serve tile data correctly 2/2', async () => {
-		const response = await fetch(`${baseUrl}/tiles/14/3740/4505`);
+		const response = await fetch(`${baseUrl}/tiles/default/14/3740/4505`);
 
 		expect(response.status).toBe(200);
 		expect(response.headers.get('content-type')).toBe('application/x-protobuf');
@@ -108,21 +101,21 @@ describe('Server', () => {
 	});
 
 	it('should throw error on missing tiles 1/2', async () => {
-		const response = await fetch(`${baseUrl}/tiles/0/0/0`);
+		const response = await fetch(`${baseUrl}/tiles/default/0/0/0`);
 
 		expect(response.status).toBe(404);
 		expect(response.headers.get('content-type')).toBe('text/plain');
-		expect(await response.text()).toBe('tile not found: /tiles/0/0/0');
-		expect(logImportant).toHaveBeenCalledWith('tile not found: /tiles/0/0/0');
+		expect(await response.text()).toBe('tile not found: /tiles/default/0/0/0');
+		expect(logImportant).toHaveBeenCalledWith('tile not found: /tiles/default/0/0/0');
 	});
 
 	it('should throw error on missing tiles 2/2', async () => {
-		const response = await fetch(`${baseUrl}/tiles/12/34/56`);
+		const response = await fetch(`${baseUrl}/tiles/default/12/34/56`);
 
 		expect(response.status).toBe(404);
 		expect(response.headers.get('content-type')).toBe('text/plain');
-		expect(await response.text()).toBe('tile not found: /tiles/12/34/56');
-		expect(logImportant).toHaveBeenCalledWith('tile not found: /tiles/12/34/56');
+		expect(await response.text()).toBe('tile not found: /tiles/default/12/34/56');
+		expect(logImportant).toHaveBeenCalledWith('tile not found: /tiles/default/12/34/56');
 	});
 
 	it('should handle unsupported HTTP methods with 405', async () => {
@@ -130,35 +123,6 @@ describe('Server', () => {
 
 		expect(response.status).toBe(405);
 		expect(logImportant).toHaveBeenCalledWith('Method not allowed');
-	});
-
-	it('should serve dynamic JSON content correctly', async () => {
-		const response = await fetch(`${baseUrl}/tiles/style.json`);
-
-		expect(response.status).toBe(200);
-		expect(response.headers.get('content-type')).toBe('application/json; charset=utf-8');
-
-		const style = await response.json();
-		expect(style).toMatchObject({
-			version: 8,
-			sprite: `http://localhost:${port}/assets/sprites/sprites`,
-			glyphs: `http://localhost:${port}/assets/fonts/{fontstack}/{range}.pbf`,
-		});
-
-		expect(style).toBeDefined();
-		expect(style).toHaveProperty('layers');
-
-		if (style == null) throw Error();
-		if (!(typeof style === 'object')) throw Error();
-		if (!('layers' in style)) throw Error();
-		if (style.layers == null) throw Error();
-		if (!Array.isArray(style.layers)) throw Error();
-
-		expect(style.layers[0]).toMatchObject({
-			id: 'background',
-			paint: { 'background-color': '#f9f4ee' },
-			type: 'background',
-		});
 	});
 });
 
@@ -170,7 +134,7 @@ describe('static files', () => {
 	beforeAll(async () => {
 		server = new ServerClass(
 			resolve(DIRNAME, 'testdata/island.versatiles'),
-			{ port, cache: false, static: resolve(DIRNAME) },
+			{ port, static: resolve(DIRNAME) },
 		);
 		await server.start();
 	});
@@ -184,19 +148,13 @@ describe('static files', () => {
 	});
 
 	it('should serve static files correctly', async () => {
-		jest.mocked(getFileContent).mockImplementationOnce(async (staticFolder: string, path: string): Promise<ResponseContent> => ({
-			buffer: Buffer.from(JSON.stringify({ staticFolder, path })),
-			mime: 'text/html; charset=utf-8',
-		}));
-		const response = await fetch(`${baseUrl}/static`);
+		const response = await fetch(`${baseUrl}/static/`);
 
 		expect(response.status).toBe(200);
 		expect(response.headers.get('content-type')).toBe('text/html; charset=utf-8');
 
-		// @ts-expect-error: yes
-		const { staticFolder, path } = await response.json();
-		expect(staticFolder).toBe(resolve(DIRNAME));
-		expect(path).toBe('/static');
+		const text = await response.text() as string;
+		expect(text).toBe(readFileSync(resolve(DIRNAME, 'static/index.html'), 'utf8'));
 	});
 });
 

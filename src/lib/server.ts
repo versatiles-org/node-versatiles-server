@@ -1,6 +1,5 @@
 import { createServer } from 'node:http';
 import { Layer } from './layer.js';
-import { resolve as resolvePath } from 'node:path';
 import { Response } from './response.js';
 import type { Reader } from '@versatiles/container';
 import type { ResponseConfig, ServerOptions } from './types.js';
@@ -8,8 +7,7 @@ import type { Server as httpServer } from 'node:http';
 import { getFileContent } from './file.js';
 import { logDebug, logImportant, logInfo } from './log.js';
 
-const DIRNAME = new URL('../../', import.meta.url).pathname;
-
+const STATIC_DIRNAME = new URL('../../static', import.meta.url).pathname;
 
 export class Server {
 	readonly #options: ServerOptions = {};
@@ -19,7 +17,7 @@ export class Server {
 	#server?: httpServer;
 
 	public constructor(source: Reader | string, options: ServerOptions) {
-		 
+
 		if (source == null) throw Error('source not defined');
 
 		Object.assign(this.#options, options);
@@ -39,7 +37,6 @@ export class Server {
 	public async start(): Promise<void> {
 		const getTile = await this.#layer.getTileFunction();
 		const recompress = this.#options.compress ?? false;
-		const staticContent = await this.#buildStaticContent();
 
 		const server = createServer((req, res) => {
 			void (async (): Promise<void> => {
@@ -59,7 +56,6 @@ export class Server {
 					}
 
 					// check request
-
 					const acceptedEncoding = req.headers['accept-encoding'] ?? '';
 					const responseConfig: ResponseConfig = {
 						acceptBr: acceptedEncoding.includes('br'),
@@ -92,20 +88,16 @@ export class Server {
 						const content = await getFileContent(this.#options.static, path);
 
 						if (content != null) {
-							logDebug('send static file');
-							await response.sendContent(content, responseConfig);
-							return;
+							logDebug('send user defined static file');
+							return await response.sendContent(content, responseConfig);
 						}
 					}
 
-
-					// check if request for cached static content
-
-					const contentResponse = staticContent.get(path);
-					if (contentResponse) {
-						logDebug('send cached static file');
-						await response.sendContent(contentResponse, responseConfig);
-						return;
+					// check if request for standard static content
+					const content = await getFileContent(STATIC_DIRNAME, path);
+					if (content != null) {
+						logDebug('send standard static file');
+						return await response.sendContent(content, responseConfig);
 					}
 
 					// error 404
@@ -144,29 +136,5 @@ export class Server {
 		});
 
 		this.#server = undefined;
-	}
-
-	async #buildStaticContent(): Promise<Cache> {
-		const staticContent = new Cache();
-
-		staticContent.addFolder('/', resolvePath(DIRNAME, 'static'));
-
-		staticContent.addBuffer(
-			'/tiles/style.json',
-			Buffer.from(await this.#layer.getStyle(this.#options)),
-			'application/json; charset=utf-8',
-		);
-
-		staticContent.addBuffer(
-			'/tiles/meta.json',
-			Buffer.from(await this.#layer.getMetadata() ?? ''),
-			'application/json; charset=utf-8',
-		);
-
-		if ((this.#options.static != null) && (this.#options.cache == true)) {
-			staticContent.addFolder('/', this.#options.static);
-		}
-
-		return staticContent;
 	}
 }

@@ -11,6 +11,14 @@ export class Response {
 	public constructor(response: ServerResponse) {
 		this.#response = response;
 	}
+	
+	public sendJSONString(json: string, config: ResponseConfig): Promise<void> {
+		return this.sendContent({
+			buffer: Buffer.from(json),
+			compression: 'raw',
+			mime: 'application/json; charset=utf-8'
+		}, config);
+	}
 
 	public async sendContent(response: ResponseContent, config: ResponseConfig): Promise<void> {
 		const mime: string = response.mime ?? 'application/octet-stream';
