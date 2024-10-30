@@ -2,7 +2,6 @@ import { createServer } from 'node:http';
 import { Layer } from './layer.js';
 import { resolve as resolvePath } from 'node:path';
 import { Response } from './response.js';
-import { Cache } from './cache.js';
 import type { Reader } from '@versatiles/container';
 import type { ResponseConfig, ServerOptions } from './types.js';
 import type { Server as httpServer } from 'node:http';
@@ -89,9 +88,7 @@ export class Server {
 						return;
 					}
 
-					// check if request for static content
-
-					if ((this.#options.cache != true) && (this.#options.static != null)) {
+					if (this.#options.static != null) {
 						const content = await getFileContent(this.#options.static, path);
 
 						if (content != null) {

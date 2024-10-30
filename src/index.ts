@@ -21,7 +21,6 @@ program
 	.option('-b, --base-url <url>', 'Base URL for the server (default: "http://localhost:<port>/")')
 	.option('-c, --compress', 'Reduces traffic by recompressing data, but responses take longer. Perfect if behind CDN.')
 	.option('-h, --host <hostnameip>', 'Hostname or IP to bind the server to', '0.0.0.0')
-	.option('-n, --no-cache', 'disable cache and serve static files directly from disc')
 	.option('-o, --open', 'Open map in web browser')
 	.option('-p, --port <port>', 'Port to bind the server to (default: 8080)')
 	.option('-q, --quiet', 'be quiet')
@@ -32,7 +31,6 @@ program
 	.action(async (source: string, cmdOptions: Record<string, unknown>) => {
 		const srvOptions: ServerOptions = {
 			baseUrl: cmdOptions.baseUrl as string | undefined,
-			cache: Boolean(cmdOptions.cache),
 			compress: Boolean(cmdOptions.compress),
 			host: String(cmdOptions.host ?? '0.0.0.0'),
 			port: Number(cmdOptions.port ?? 8080),

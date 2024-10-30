@@ -17,7 +17,6 @@ export interface ServerOptions {
 	compress?: boolean; // Reduces traffic by recompressing data, but responses take longer. Perfect if behind CDN.
 	glyphsUrl?: string;
 	host?: string; // Hostname or IP to bind the server to', '0.0.0.0'
-	cache?: boolean; // enable cache, otherwise serve static files directly from disc
 	port?: number; // Port to bind the server to (default: 8080)
 	spriteUrl?: string;
 	static?: string; // Path to a folder with static files

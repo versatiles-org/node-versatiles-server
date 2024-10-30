@@ -36,7 +36,6 @@ describe('index.ts', () => {
 	const defaultSource = 'test.versatiles';
 	const defaultResults: ServerOptions = {
 		baseUrl: undefined,
-		cache: true,
 		compress: false,
 		host: '0.0.0.0',
 		port: 8080,
@@ -76,11 +75,6 @@ describe('index.ts', () => {
 	it('starts server with port', async () => {
 		await run(defaultSource + ' -p 12345');
 		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults, port: 12345 });
-	});
-
-	it('starts server without cache', async () => {
-		await run(defaultSource + ' -n');
-		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults, cache: false });
 	});
 
 	it('starts server with open', async () => {
