@@ -38,7 +38,7 @@ export function generateStyle(containerInfo: ContainerInfo, options: ServerOptio
 
 	const input: GuessStyleOptions = {
 		format,
-		tiles: [options.tilesUrl ?? '/tiles/{z}/{x}/{y}'],
+		tiles: [options.tilesUrl ?? '/tiles/default/{z}/{x}/{y}'],
 		baseUrl,
 		bounds: header.bbox,
 	};

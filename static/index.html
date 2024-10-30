@@ -5,8 +5,8 @@
 	<meta charset="utf-8">
 	<title>VersaTiles</title>
 	<meta name="viewport" content="width=device-width">
-	<script src="/assets/maplibre/maplibre-gl.js"></script>
-	<link href="/assets/maplibre/maplibre-gl.css" rel="stylesheet">
+	<script src="/assets/lib/maplibre-gl/maplibre-gl.js"></script>
+	<link href="/assets/lib/maplibre-gl/maplibre-gl.css" rel="stylesheet">
 	<style>
 		body {
 			margin: 0;
@@ -23,7 +23,7 @@
 	<div id="map"></div>
 	<script>
 		(async () => {
-			const style = await (await fetch('tiles/style.json')).json();
+			const style = await (await fetch('tiles/default/style.json')).json();
 
 			const mapOptions = {
 				container: 'map',

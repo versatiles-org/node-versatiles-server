@@ -87,6 +87,10 @@ export class Server {
 						return await response.sendJSONString(await this.#layer.getMetadata() ?? '', responseConfig);
 					}
 
+					if (path == '/tiles/default/style.json') {
+						return await response.sendJSONString(await this.#layer.getStyle(this.#options), responseConfig);
+					}
+
 					if (path == '/tiles/index.json') {
 						return await response.sendJSONString('["default"]', responseConfig);
 					}
