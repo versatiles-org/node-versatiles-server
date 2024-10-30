@@ -8,13 +8,14 @@ export default [
 	...ts.configs.recommended,
 	{
 		ignores: [
-			'**/dist/**/*.*',
-			'**/coverage/**/*.*',
+			'coverage/**/*.*',
+			'dist/**/*.*',
+			'static/assets/lib/**/*.*',
 		]
 	},
 	{
 		files: [
-			'**/src/**/*.ts',
+			'src/**/*.ts',
 		],
 		languageOptions: {
 			ecmaVersion: 'latest',
