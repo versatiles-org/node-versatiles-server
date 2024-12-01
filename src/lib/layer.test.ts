@@ -44,9 +44,9 @@ describe('Layer class', () => {
 			expect(info).toBeDefined();
 			expect(info.header).toMatchObject(expectedHeader);
 
-			 
+
 			const metadata = JSON.parse(info.metadata ?? '');
-			 
+
 			expect(metadata?.vector_layers?.length).toBe(26);
 		});
 	});
@@ -55,17 +55,19 @@ describe('Layer class', () => {
 		it('should generate the correct style string', async () => {
 			const style: unknown = JSON.parse(await layer.getStyle({ port: 1234 }));
 			expect(style).toMatchObject({
-				glyphs: 'http://localhost:1234/assets/fonts/{fontstack}/{range}.pbf',
-				sprite: 'http://localhost:1234/assets/sprites/sprites',
+				glyphs: 'http://localhost:1234/assets/glyphs/{fontstack}/{range}.pbf',
+				sprite: [
+					{ id: 'basics', url: 'http://localhost:1234/assets/sprites/basics/sprites' },
+				]
 			});
 		});
 	});
 
 	describe('getMetadata', () => {
 		it('should return the correct metadata', async () => {
-			 
+
 			const metadata = JSON.parse(await layer.getMetadata() ?? '');
-			 
+
 			expect(metadata?.vector_layers?.length).toBe(26);
 		});
 	});
