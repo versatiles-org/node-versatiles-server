@@ -55,22 +55,22 @@
   "dependencies": {
     "@versatiles/container": "^1.2.3",
     "@versatiles/style": "^5.0.0",
-    "commander": "^12.1.0",
+    "commander": "^13.0.0",
     "open": "^10.1.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.10.1",
-    "@typescript-eslint/eslint-plugin": "^8.16.0",
-    "@typescript-eslint/parser": "^8.16.0",
+    "@types/node": "^22.10.3",
+    "@typescript-eslint/eslint-plugin": "^8.19.0",
+    "@typescript-eslint/parser": "^8.19.0",
     "@versatiles/release-tool": "^1.2.6",
-    "eslint": "^9.16.0",
+    "eslint": "^9.17.0",
     "jest": "^29.7.0",
-    "npm-check-updates": "^17.1.11",
+    "npm-check-updates": "^17.1.13",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.16.0"
+    "typescript-eslint": "^8.19.0"
   }
 }
