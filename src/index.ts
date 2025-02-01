@@ -29,7 +29,7 @@ program
 	.option('-v, --verbose', 'be verbose', (_, previous) => previous + 1, 0)
 	.argument('<source>', 'VersaTiles container, can be a URL or filename of a "*.versatiles" file')
 	.action(async (source: string, cmdOptions: Record<string, unknown>) => {
-		const srvOptions: ServerOptions = {
+		const srvOptions: Partial<ServerOptions> = {
 			baseUrl: cmdOptions.baseUrl as string | undefined,
 			compress: Boolean(cmdOptions.compress),
 			host: String(cmdOptions.host ?? '0.0.0.0'),

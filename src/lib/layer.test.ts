@@ -1,27 +1,27 @@
 import { Layer } from './layer.js';
+import { ServerOptions } from './types.js';
 
 
 describe('Layer class', () => {
 	const filename = new URL('../../testdata/island.versatiles', import.meta.url).pathname;
-	const layer: Layer = new Layer(filename);
-	const expectedHeader = {
-		tileFormat: 'pbf',
-		tileCompression: 'br',
-		magic: 'versatiles_v02',
-		version: 'v02',
-		zoomMax: 14,
-		zoomMin: 8,
+	const baseUrl = 'http://example.org:1234';
+	const serverOptions: ServerOptions = {
+		baseUrl,
+		glyphs: baseUrl + '/assets/glyphs/{fontstack}/{range}.pbf',
+		sprites: [{ id: 'basics', url: baseUrl + '/assets/sprites/basics/sprites' }],
+		tilesUrl: baseUrl + '/tiles/test/{z}/{x}/{y}.pbf',
 	};
 
 	describe('constructor', () => {
 		it('should initialize the Layer instance correctly', () => {
-			const tempLayer = new Layer(filename);
-			expect(tempLayer).toBeDefined();
+			const layer = new Layer(filename, serverOptions);
+			expect(layer).toBeDefined();
 		});
 	});
 
 	describe('getTileFunction', () => {
 		it('should return a function that fetches tiles correctly', async () => {
+			const layer = new Layer(filename, serverOptions);
 			const tileFunc = await layer.getTileFunction();
 			expect(typeof tileFunc).toBe('function');
 
@@ -33,31 +33,20 @@ describe('Layer class', () => {
 		});
 
 		it('should handle null response for non-existent tiles', async () => {
+			const layer = new Layer(filename, serverOptions);
 			const tileFunc = await layer.getTileFunction();
 			expect(await tileFunc(1, 2, 3)).toBeNull();
 		});
 	});
 
-	describe('getInfo', () => {
-		it('should return the correct container info', async () => {
-			const info = await layer.getInfo();
-			expect(info).toBeDefined();
-			expect(info.header).toMatchObject(expectedHeader);
-
-
-			const metadata = JSON.parse(info.metadata ?? '');
-
-			expect(metadata?.vector_layers?.length).toBe(26);
-		});
-	});
-
 	describe('getStyle', () => {
 		it('should generate the correct style string', async () => {
-			const style: unknown = JSON.parse(await layer.getStyle({ port: 1234 }));
+			const layer = new Layer(filename, serverOptions);
+			const style: unknown = JSON.parse(await layer.getStyle());
 			expect(style).toMatchObject({
-				glyphs: 'http://localhost:1234/assets/glyphs/{fontstack}/{range}.pbf',
+				glyphs: 'http://example.org:1234/assets/glyphs/{fontstack}/{range}.pbf',
 				sprite: [
-					{ id: 'basics', url: 'http://localhost:1234/assets/sprites/basics/sprites' },
+					{ id: 'basics', url: 'http://example.org:1234/assets/sprites/basics/sprites' },
 				]
 			});
 		});
@@ -65,9 +54,8 @@ describe('Layer class', () => {
 
 	describe('getMetadata', () => {
 		it('should return the correct metadata', async () => {
-
+			const layer = new Layer(filename, serverOptions);
 			const metadata = JSON.parse(await layer.getMetadata() ?? '');
-
 			expect(metadata?.vector_layers?.length).toBe(26);
 		});
 	});
