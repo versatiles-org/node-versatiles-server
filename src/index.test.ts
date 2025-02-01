@@ -1,5 +1,5 @@
- 
- 
+
+
 
 import { Command } from 'commander';
 import { jest } from '@jest/globals';
@@ -34,12 +34,10 @@ const { setLogLevel } = await import('./lib/log.js');
 
 describe('index.ts', () => {
 	const defaultSource = 'test.versatiles';
-	const defaultResults: ServerOptions = {
-		baseUrl: undefined,
+	const defaultResults: Partial<ServerOptions> = {
 		compress: false,
 		host: '0.0.0.0',
 		port: 8080,
-		static: undefined,
 		tms: false,
 	};
 
@@ -122,7 +120,7 @@ describe('index.ts', () => {
 	async function run(args: string): Promise<void> {
 		const moduleUrl = './index.js?t=' + Math.random();
 		const module = await import(moduleUrl);
-		 
+
 		const program = (module.program) as Command;
 		await program.parseAsync(['./node', './index.ts', ...args.split(' ').filter(a => a)]);
 	}

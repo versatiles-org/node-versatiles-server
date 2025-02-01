@@ -1,30 +1,30 @@
-import type { Compression, Reader } from '@versatiles/container';
+import type { Compression, Header, Reader } from '@versatiles/container';
 import { Container } from '@versatiles/container';
-import type { ContainerInfo, ResponseContent, ServerOptions } from './types.js';
+import type { ResponseContent, ServerOptions } from './types.js';
 import { generateStyle } from './style.js';
 
 
 export class Layer {
 	readonly #container: Container;
 
-	#info?: ContainerInfo;
-
+	#serverOptions: ServerOptions;
+	#header?: Header;
+	#metadata?: string;
 	#mime?: string;
-
 	#compression?: Compression;
 
-	public constructor(source: Reader | string, options?: ServerOptions) {
-		this.#container = new Container(source, { tms: options?.tms ?? false });
+	public constructor(source: Reader | string, serverOptions: ServerOptions) {
+		this.#serverOptions = serverOptions
+		this.#container = new Container(source, { tms: serverOptions?.tms ?? false });
 	}
 
 	public async init(): Promise<void> {
-		if (this.#info) return;
+		if (this.#header) return;
 
-		const header = await this.#container.getHeader();
-		const metadata = await this.#container.getMetadata();
-		this.#mime = header.tileMime;
-		this.#compression = header.tileCompression;
-		this.#info = { header, metadata };
+		this.#header = await this.#container.getHeader();
+		this.#metadata = await this.#container.getMetadata() ?? '{}';
+		this.#mime = this.#header.tileMime;
+		this.#compression = this.#header.tileCompression;
 	}
 
 	public async getTileFunction(): Promise<(z: number, x: number, y: number) => Promise<ResponseContent | null>> {
@@ -41,21 +41,14 @@ export class Layer {
 		};
 	}
 
-	public async getInfo(): Promise<ContainerInfo> {
+	public async getStyle(): Promise<string> {
 		await this.init();
-		if (!this.#info) throw Error();
-		return this.#info;
-	}
-
-	public async getStyle(options: ServerOptions): Promise<string> {
-		await this.init();
-		if (!this.#info) throw Error();
-		return generateStyle(this.#info, options);
+		if (!this.#metadata) throw Error();
+		return generateStyle(this.#metadata, this.#serverOptions);
 	}
 
 	public async getMetadata(): Promise<string | undefined> {
 		await this.init();
-		if (!this.#info) throw Error();
-		return this.#info.metadata;
+		return this.#metadata;
 	}
 }

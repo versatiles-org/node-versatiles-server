@@ -10,24 +10,35 @@ import { logDebug, logImportant, logInfo } from './log.js';
 const STATIC_DIRNAME = new URL('../../static', import.meta.url).pathname;
 
 export class Server {
-	readonly #options: ServerOptions = {};
+	readonly #options: ServerOptions;
 
 	readonly #layer: Layer;
 
 	#server?: httpServer;
 
-	public constructor(source: Reader | string, options: ServerOptions) {
-
+	public constructor(source: Reader | string, options: Partial<ServerOptions>) {
 		if (source == null) throw Error('source not defined');
 
-		Object.assign(this.#options, options);
+		const port = options.port ?? 8080;
+		const baseUrl = options.baseUrl ?? `http://localhost:${port}/`;
+		const tilesUrl = urlJoin(options.tilesUrl ?? '/tiles/default/{z}/{x}/{y}');
+		const sprites = urlJoin(options.sprites ?? [{ id: 'basics', url: '/assets/sprites/basics/sprites' }]);
+		const glyphs = urlJoin(options.glyphs ?? 'assets/glyphs/{fontstack}/{range}.pbf');
+		const compress = options.compress ?? true;
+		const host = options.host ?? '0.0.0.0';
+		this.#options = { ...options, port, baseUrl, tilesUrl, sprites, glyphs, compress, host };
 
-		this.#options.port ??= 8080;
-		this.#options.baseUrl ??= `http://localhost:${this.#options.port}/`;
-		this.#options.compress ??= true;
-		this.#options.host ??= '0.0.0.0';
+		this.#layer = new Layer(source, this.#options);
 
-		this.#layer = new Layer(source, options);
+		function urlJoin<T extends string | { id: string; url: string; }[]>(url: T): T {
+			if (typeof url === 'string') {
+				return new URL(url, baseUrl).href.replace(/%7B/g, '{').replace(/%7D/g, '}') as T;
+			}
+			if (Array.isArray(url)) {
+				return url.map(({ id, url }) => ({ id, url: urlJoin(url) })) as T;
+			}
+			throw Error('invalid url');
+		}
 	}
 
 	public getUrl(): string {
@@ -88,7 +99,7 @@ export class Server {
 					}
 
 					if (path == '/tiles/default/style.json') {
-						return await response.sendJSONString(await this.#layer.getStyle(this.#options), responseConfig);
+						return await response.sendJSONString(await this.#layer.getStyle(), responseConfig);
 					}
 
 					if (path == '/tiles/index.json') {
