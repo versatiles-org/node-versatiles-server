@@ -55,6 +55,43 @@ Options:
   --help                   display help for command
 ```
 
+## Dependency Graph
+
+<!--- This chapter is generated automatically --->
+
+```mermaid
+flowchart TB
+
+subgraph 0["src"]
+1["index.ts"]
+subgraph 2["lib"]
+3["log.ts"]
+4["server.ts"]
+5["file.ts"]
+6["mime_types.ts"]
+7["layer.ts"]
+8["style.ts"]
+9["response.ts"]
+A["compressors.ts"]
+B["types.ts"]
+end
+end
+1-->3
+1-->4
+4-->5
+4-->7
+4-->3
+4-->9
+5-->6
+6-->3
+7-->8
+9-->A
+9-->3
+
+style 0 fill-opacity:0.2
+style 2 fill-opacity:0.2
+```
+
 ## License
 
 [Unlicense](./LICENSE.md)
