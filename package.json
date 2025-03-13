@@ -12,16 +12,19 @@
     "static"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.build.json && chmod +x dist/index.js",
+    "build": "npm run build-node && npm run doc",
+    "build-node": "rm -rf dist && tsc -p tsconfig.build.json && chmod +x dist/index.js",
     "check": "npm run lint && npm run build && npm run test",
-    "doc": "vrt cmd2md versatiles-server | vrt insertmd README.md '## Options'",
+    "doc": "npm run doc-command && npm run doc-graph",
+    "doc-command": "vrt doc-command versatiles-server | vrt doc-insert README.md '## Options'",
+    "doc-graph": "vrt deps-graph | vrt doc-insert README.md '## Dependency Graph'",
     "lint": "eslint . --color",
-    "prepack": "npm run build && npm run doc",
+    "prepack": "npm run build",
     "release": "npx vrt release-npm",
     "start": "tsx src/index.ts",
     "test-coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "upgrade": "npm-check-updates -u && rm -f package-lock.json; rm -rf node_modules; npm i && npm update"
+    "upgrade": "vrt deps-upgrade"
   },
   "repository": {
     "type": "git",
