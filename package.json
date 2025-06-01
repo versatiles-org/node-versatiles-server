@@ -58,21 +58,21 @@
   "dependencies": {
     "@versatiles/container": "^1.2.5",
     "@versatiles/style": "^5.6.0",
-    "commander": "^13.1.0",
+    "commander": "^14.0.0",
     "open": "^10.1.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.15.3",
-    "@typescript-eslint/eslint-plugin": "^8.31.1",
-    "@typescript-eslint/parser": "^8.31.1",
+    "@types/node": "^22.15.29",
+    "@typescript-eslint/eslint-plugin": "^8.33.0",
+    "@typescript-eslint/parser": "^8.33.0",
     "@versatiles/release-tool": "^2.4.2",
-    "eslint": "^9.25.1",
+    "eslint": "^9.28.0",
     "jest": "^29.7.0",
-    "ts-jest": "^29.3.2",
+    "ts-jest": "^29.3.4",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.31.1"
+    "typescript-eslint": "^8.33.0"
   }
 }
