@@ -57,22 +57,22 @@
   ],
   "dependencies": {
     "@versatiles/container": "^1.2.5",
-    "@versatiles/style": "^5.6.0",
+    "@versatiles/style": "^5.7.0",
     "commander": "^14.0.0",
     "open": "^10.1.2"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.14",
-    "@types/node": "^22.15.29",
-    "@typescript-eslint/eslint-plugin": "^8.33.0",
-    "@typescript-eslint/parser": "^8.33.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.8",
+    "@typescript-eslint/eslint-plugin": "^8.35.1",
+    "@typescript-eslint/parser": "^8.35.1",
     "@versatiles/release-tool": "^2.4.2",
-    "eslint": "^9.28.0",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.3.4",
+    "eslint": "^9.30.0",
+    "jest": "^30.0.3",
+    "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
-    "tsx": "^4.19.4",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.33.0"
+    "typescript-eslint": "^8.35.1"
   }
 }
