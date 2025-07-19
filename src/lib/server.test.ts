@@ -1,7 +1,7 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync } from 'fs';
 import { jest } from '@jest/globals';
-import { createHash } from 'node:crypto';
-import { resolve } from 'node:path';
+import { createHash } from 'crypto';
+import { resolve } from 'path';
 import type { Server } from './server.js';
 
 const DIRNAME = new URL('../../', import.meta.url).pathname;

@@ -4,7 +4,7 @@ import { Command } from 'commander';
 import type { ServerOptions } from './lib/types.js';
 import open from 'open';
 import { Server } from './lib/server.js';
-import { resolve } from 'node:path';
+import { resolve } from 'path';
 import { logImportant, setLogLevel } from './lib/log.js';
 
 /**

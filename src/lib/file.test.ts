@@ -1,11 +1,11 @@
 // Import the function to test
 import { jest } from '@jest/globals';
 
-// Mock the `node:fs` and `node:fs/promises` modules
-jest.unstable_mockModule('node:fs', () => ({
+// Mock the `fs` and `fs/promises` modules
+jest.unstable_mockModule('fs', () => ({
 	existsSync: jest.fn(),
 }));
-jest.unstable_mockModule('node:fs/promises', () => ({
+jest.unstable_mockModule('fs/promises', () => ({
 	// @ts-expect-error: too lazy to fix this
 	readFile: jest.fn().mockImplementation(async (filename: string) => Promise.resolve(`readFile(${filename})`)),
 	stat: jest.fn(),
@@ -13,8 +13,8 @@ jest.unstable_mockModule('node:fs/promises', () => ({
 
 // Get the mocked functions
 const { getFileContent } = await import('./file.js');
-const { existsSync } = await import('node:fs');
-const { readFile, stat } = await import('node:fs/promises');
+const { existsSync } = await import('fs');
+const { readFile, stat } = await import('fs/promises');
 
 describe('getFileContent', () => {
 	beforeEach(() => {

@@ -1,9 +1,9 @@
-import { createServer } from 'node:http';
+import { createServer } from 'http';
 import { Layer } from './layer.js';
 import { Response } from './response.js';
 import type { Reader } from '@versatiles/container';
 import type { ResponseConfig, ServerOptions } from './types.js';
-import type { Server as httpServer } from 'node:http';
+import type { Server as httpServer } from 'http';
 import { getFileContent } from './file.js';
 import { logDebug, logImportant, logInfo } from './log.js';
 

@@ -1,5 +1,5 @@
 
-import zlib from 'node:zlib';
+import zlib from 'zlib';
 
 /**
  * Compresses data using Gzip with maximum compression level.

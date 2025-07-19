@@ -1,6 +1,6 @@
-import { existsSync } from 'node:fs';
-import { readFile, stat } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { existsSync } from 'fs';
+import { readFile, stat } from 'fs/promises';
+import { resolve } from 'path';
 import type { ResponseContent } from './types.js';
 import { getMimeByFilename } from './mime_types.js';
 

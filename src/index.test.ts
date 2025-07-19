@@ -16,7 +16,7 @@ jest.unstable_mockModule('./lib/server.js', () => ({
 }));
 const mockedServer = (await import('./lib/server.js')).Server as unknown as jest.Mocked<Server>;
 
-jest.mock('node:process');
+jest.mock('process');
 jest.spyOn(process, 'exit').mockImplementation(jest.fn<typeof process.exit>());
 jest.spyOn(process.stdout, 'write').mockReturnValue(true);
 jest.spyOn(process.stderr, 'write').mockReturnValue(true);
