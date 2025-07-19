@@ -20,7 +20,7 @@
     "doc-graph": "vrt deps-graph | vrt doc-insert README.md '## Dependency Graph'",
     "lint": "eslint . --color",
     "prepack": "npm run build",
-    "release": "npx vrt release-npm",
+    "release": "vrt release-npm",
     "start": "tsx src/index.ts",
     "test-coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
