@@ -1,4 +1,5 @@
 import { gzip, ungzip, brotli, unbrotli } from './compressors.js';
+import { describe, it, expect } from 'vitest';
 
 describe('Compression Module', () => {
 	const testString = 'The quick brown fox jumps over the lazy dog';

@@ -1,14 +1,14 @@
  
 import { IncomingMessage, ServerResponse } from 'http';
 import { Socket } from 'net';
-import { jest } from '@jest/globals';
+import { describe, it, expect,vi, beforeEach, afterEach } from 'vitest';
 import type { ResponseContent } from './types.js';
 import type { Response } from './response.js';
 import { brotliCompressSync, gzipSync } from 'zlib';
 
 
-jest.unstable_mockModule('./log.js', () => ({
-	logImportant: jest.fn(),
+vi.mock('./log.js', () => ({
+	logImportant: vi.fn(),
 }));
 const { logImportant } = await import('./log.js');
 const { Response: ResponseClass } = await import('./response.js');
@@ -23,17 +23,17 @@ describe('Response Tests', () => {
 	beforeEach(() => {
 		const mockSocket = new Socket();
 		const mockedRequest = new IncomingMessage(mockSocket);
-		mockRes = jest.mocked(new ServerResponse(mockedRequest));
-		jest.spyOn(mockRes, 'setHeader');
-		jest.spyOn(mockRes, 'end');
-		jest.spyOn(console, 'error').mockImplementation(() => {
+		mockRes = vi.mocked(new ServerResponse(mockedRequest));
+		vi.spyOn(mockRes, 'setHeader');
+		vi.spyOn(mockRes, 'end');
+		vi.spyOn(console, 'error').mockImplementation(() => {
 			return;
 		});
 		response = new ResponseClass(mockRes);
 	});
 
 	afterEach(() => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	});
 
 	describe('respond with content', () => {
@@ -120,18 +120,18 @@ describe('Response Tests', () => {
 
 				switch (result) {
 					case 'raw':
-						expect(jest.mocked(mockRes.setHeader).mock.calls).toStrictEqual([
+						expect(vi.mocked(mockRes.setHeader).mock.calls).toStrictEqual([
 							['content-type', 'text/plain'],
 						]);
 						break;
 					case 'gzip':
-						expect(jest.mocked(mockRes.setHeader).mock.calls).toStrictEqual([
+						expect(vi.mocked(mockRes.setHeader).mock.calls).toStrictEqual([
 							['content-encoding', 'gzip'],
 							['content-type', 'text/plain'],
 						]);
 						break;
 					case 'br':
-						expect(jest.mocked(mockRes.setHeader).mock.calls).toStrictEqual([
+						expect(vi.mocked(mockRes.setHeader).mock.calls).toStrictEqual([
 							['content-encoding', 'br'],
 							['content-type', 'text/plain'],
 						]);

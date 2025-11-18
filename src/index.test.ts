@@ -1,34 +1,31 @@
-
-
-
 import { Command } from 'commander';
-import { jest } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach, Mocked } from 'vitest';
 import type { ServerOptions } from './lib/types.js';
 import type { Server } from './lib/server.js';
 
-//const mockedServer = jest.fn<typeof Server>().mockReturnValue(null);
-jest.unstable_mockModule('./lib/server.js', () => ({
-	Server: jest.fn().mockImplementation(() => ({
-		getUrl: jest.fn<() => string>().mockReturnValue('https:/dingdong'),
-		start: jest.fn<() => Promise<void>>(),
-		stop: jest.fn<() => Promise<void>>(),
-	})),
+//const mockedServer = vi.fn<typeof Server>().mockReturnValue(null);
+vi.mock('./lib/server.js', () => ({
+	Server: vi.fn(class {
+		getUrl = vi.fn(() => 'https:/dingdong')
+		start = vi.fn(() => Promise.resolve())
+		stop = vi.fn(() => Promise.resolve())
+	}),
 }));
-const mockedServer = (await import('./lib/server.js')).Server as unknown as jest.Mocked<Server>;
+const mockedServer = (await import('./lib/server.js')).Server as unknown as Mocked<Server>;
 
-jest.mock('process');
-jest.spyOn(process, 'exit').mockImplementation(jest.fn<typeof process.exit>());
-jest.spyOn(process.stdout, 'write').mockReturnValue(true);
-jest.spyOn(process.stderr, 'write').mockReturnValue(true);
+vi.mock('process');
+vi.spyOn(process, 'exit').mockImplementation(vi.fn(() => null as never));
+vi.spyOn(process.stdout, 'write').mockReturnValue(true);
+vi.spyOn(process.stderr, 'write').mockReturnValue(true);
 
-jest.spyOn(Command.prototype, 'parse').mockReturnThis();
+vi.spyOn(Command.prototype, 'parse').mockReturnThis();
 
-jest.unstable_mockModule('open', () => ({ default: jest.fn<typeof open>() }));
+vi.mock('open', () => ({ default: vi.fn(() => null) }));
 const open = (await import('open')).default;
 
-jest.unstable_mockModule('./lib/log.js', () => ({
-	logImportant: jest.fn(),
-	setLogLevel: jest.fn(),
+vi.mock('./lib/log.js', () => ({
+	logImportant: vi.fn(() => null),
+	setLogLevel: vi.fn(() => null),
 }));
 const { setLogLevel } = await import('./lib/log.js');
 
@@ -42,7 +39,7 @@ describe('index.ts', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('starts server with no arguments', async () => {
@@ -118,7 +115,7 @@ describe('index.ts', () => {
 	});
 
 	async function run(args: string): Promise<void> {
-		const moduleUrl = './index.js?t=' + Math.random();
+		const moduleUrl = './index.js?t=' + Math.random().toString(16).slice(2);
 		const module = await import(moduleUrl);
 
 		const program = (module.program) as Command;

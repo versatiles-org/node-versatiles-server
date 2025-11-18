@@ -1,5 +1,6 @@
 import { ServerOptions } from './types.js';
 import { generateStyle } from './style.js';
+import { describe, it, expect } from 'vitest';
 
 describe('generateStyle', () => {
 	const validTileJSON = JSON.stringify({

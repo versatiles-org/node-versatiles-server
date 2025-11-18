@@ -47,6 +47,7 @@ program
 			void server.start();
 
 			if (cmdOptions.open) {
+				console.log('Opening web browser...');
 				await open(server.getUrl());
 			}
 		} catch (error: unknown) {

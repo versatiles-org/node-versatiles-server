@@ -1,7 +1,7 @@
-import { jest } from '@jest/globals';
+import { vi, describe, it, expect } from 'vitest';
 
-jest.unstable_mockModule('./log.js', () => ({
-	logImportant: jest.fn(),
+vi.mock('./log.js', () => ({
+	logImportant: vi.fn(),
 }));
 const { logImportant } = await import('./log.js');
 const { getMimeByFilename } = await import('./mime_types.js');
@@ -27,7 +27,7 @@ describe('MIME Type Tests', () => {
 		});
 
 		it('should return default MIME type for filenames with invalid extensions', () => {
-			jest.mocked(logImportant).mockClear();
+			vi.mocked(logImportant).mockClear();
 			expect(getMimeByFilename('file.unknown', true)).toBe('application/octet-stream');
 			expect(logImportant).toHaveBeenCalledWith('Error: can not guess MIME for file: file.unknown');
 		});

@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { jest } from '@jest/globals';
+import { describe, it, expect, vi, beforeAll, afterEach, afterAll } from 'vitest';
 import { createHash } from 'crypto';
 import { resolve } from 'path';
 import type { Server } from './server.js';
@@ -7,10 +7,10 @@ import type { Server } from './server.js';
 const DIRNAME = new URL('../../', import.meta.url).pathname;
 
 
-jest.unstable_mockModule('./log.js', () => ({
-	logDebug: jest.fn(),
-	logImportant: jest.fn(),
-	logInfo: jest.fn(),
+vi.mock('./log.js', () => ({
+	logDebug: vi.fn(),
+	logImportant: vi.fn(),
+	logInfo: vi.fn(),
 }));
 const { logImportant } = await import('./log.js');
 const { Server: ServerClass } = await import('./server.js');
@@ -29,7 +29,7 @@ describe('Server', () => {
 	});
 
 	afterEach(() => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	});
 
 	afterAll(async () => {
@@ -140,7 +140,7 @@ describe('static files', () => {
 	});
 
 	afterEach(() => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	});
 
 	afterAll(async () => {

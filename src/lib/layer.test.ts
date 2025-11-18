@@ -1,5 +1,6 @@
 import { Layer } from './layer.js';
 import { ServerOptions } from './types.js';
+import { describe, it, expect } from 'vitest';
 
 
 describe('Layer class', () => {
