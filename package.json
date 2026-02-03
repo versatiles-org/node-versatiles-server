@@ -57,21 +57,21 @@
   ],
   "dependencies": {
     "@versatiles/container": "^1.2.8",
-    "@versatiles/style": "^5.7.0",
-    "commander": "^14.0.2",
+    "@versatiles/style": "^5.8.4",
+    "commander": "^14.0.3",
     "open": "^11.0.0"
   },
   "devDependencies": {
-    "@types/node": "^25.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.47.0",
-    "@typescript-eslint/parser": "^8.47.0",
-    "@versatiles/release-tool": "^2.4.5",
-    "@vitest/coverage-v8": "^4.0.10",
-    "eslint": "^9.39.1",
+    "@types/node": "^25.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
+    "@typescript-eslint/parser": "^8.54.0",
+    "@versatiles/release-tool": "^2.6.0",
+    "@vitest/coverage-v8": "^4.0.18",
+    "eslint": "^9.39.2",
     "ts-node": "^10.9.2",
-    "tsx": "^4.20.6",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.47.0",
-    "vitest": "^4.0.10"
+    "typescript-eslint": "^8.54.0",
+    "vitest": "^4.0.18"
   }
 }
