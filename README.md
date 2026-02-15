@@ -1,5 +1,8 @@
-[![Code Coverage](https://codecov.io/gh/versatiles-org/node-versatiles-server/branch/main/graph/badge.svg?token=IDHAI13M0K)](https://codecov.io/gh/versatiles-org/node-versatiles-server)
-[![GitHub Workflow Status)](https://img.shields.io/github/actions/workflow/status/versatiles-org/node-versatiles-server/ci.yml)](https://github.com/versatiles-org/node-versatiles-server/actions/workflows/ci.yml)
+[![NPM version](https://img.shields.io/npm/v/%40versatiles%2Fserver)](https://www.npmjs.com/package/@versatiles/server)
+[![NPM downloads](https://img.shields.io/npm/dt/%40versatiles%2Fserver)](https://www.npmjs.com/package/@versatiles/server)
+[![Code coverage](https://codecov.io/gh/versatiles-org/node-versatiles-server/branch/main/graph/badge.svg?token=IDHAI13M0K)](https://codecov.io/gh/versatiles-org/node-versatiles-server)
+[![CI status](https://img.shields.io/github/actions/workflow/status/versatiles-org/node-versatiles-server/ci.yml)](https://github.com/versatiles-org/node-versatiles-server/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 # VersaTiles - Server
 
