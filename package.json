@@ -67,7 +67,7 @@
     "@typescript-eslint/parser": "^8.55.0",
     "@versatiles/release-tool": "^2.7.1",
     "@vitest/coverage-v8": "^4.0.18",
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
