@@ -13,8 +13,8 @@ export function generateStyle(metadata: string, serverOptions: ServerOptions): s
 	let tileJSON: TileJSONSpecification;
 	try {
 		tileJSON = JSON.parse(metadata)
-	} catch (_) {
-		throw Error('invalid metadata');
+	} catch (cause) {
+		throw new Error('invalid metadata', { cause });
 	}
 
 	tileJSON.tiles = [serverOptions.tilesUrl];
