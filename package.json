@@ -1,6 +1,6 @@
 {
   "name": "@versatiles/server",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "A server for VersaTiles",
   "bin": {
     "versatiles-server": "./dist/index.js"
