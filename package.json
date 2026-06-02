@@ -58,7 +58,7 @@
   "dependencies": {
     "@versatiles/container": "^1.4.2",
     "@versatiles/style": "^5.12.0",
-    "commander": "^14.0.3",
+    "commander": "^15.0.0",
     "open": "^11.0.0"
   },
   "devDependencies": {
