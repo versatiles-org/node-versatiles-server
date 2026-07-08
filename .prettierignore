@@ -1,8 +1,9 @@
+CHANGELOG.md
 coverage
 dist
-docs
 node_modules
-static/assets/lib
 package-lock.json
-CHANGELOG.md
+package.json
 README.md
+static/assets/
+static/assets/lib
