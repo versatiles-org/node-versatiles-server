@@ -6,9 +6,10 @@
 # complete frontend that is far larger than what this server needs. We only refresh
 # the files we already bundle, so the static/ folder keeps its lean, curated shape.
 #
-# Deliberately NOT touched:
+# Deliberately NOT touched / excluded:
 #   - static/index.html            our own, minimal viewer page
 #   - static/assets/glyphs/**      large, rarely-changing font glyphs
+#   - *.map                        source maps, not needed in the shipped frontend
 #
 set -euo pipefail
 
@@ -22,6 +23,7 @@ files=()
 while IFS= read -r f; do files+=("$f"); done < <(
 	find . -type f \
 		! -name '.DS_Store' \
+		! -name '*.map' \
 		! -path './index.html' \
 		! -path './assets/glyphs/*' \
 		| sed 's|^\./||' | sort
