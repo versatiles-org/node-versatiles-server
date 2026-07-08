@@ -1,0 +1,8 @@
+coverage
+dist
+docs
+node_modules
+static/assets/lib
+package-lock.json
+CHANGELOG.md
+README.md
