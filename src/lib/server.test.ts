@@ -6,7 +6,6 @@ import type { Server } from './server.js';
 
 const DIRNAME = new URL('../../', import.meta.url).pathname;
 
-
 vi.mock('./log.js', () => ({
 	logDebug: vi.fn(),
 	logImportant: vi.fn(),
@@ -14,7 +13,6 @@ vi.mock('./log.js', () => ({
 }));
 const { logImportant } = await import('./log.js');
 const { Server: ServerClass } = await import('./server.js');
-
 
 describe('Server', () => {
 	let server: Server;
@@ -39,7 +37,6 @@ describe('Server', () => {
 	it('getUrl', async () => {
 		expect(server.getUrl()).toBe(baseUrl + '/');
 	});
-
 
 	it('should serve static content', async () => {
 		const response = await fetch(`${baseUrl}/index.html`, {
@@ -132,10 +129,7 @@ describe('static files', () => {
 	const baseUrl = `http://localhost:${port}`;
 
 	beforeAll(async () => {
-		server = new ServerClass(
-			resolve(DIRNAME, 'testdata/island.versatiles'),
-			{ port, static: resolve(DIRNAME) },
-		);
+		server = new ServerClass(resolve(DIRNAME, 'testdata/island.versatiles'), { port, static: resolve(DIRNAME) });
 		await server.start();
 	});
 
@@ -153,7 +147,7 @@ describe('static files', () => {
 		expect(response.status).toBe(200);
 		expect(response.headers.get('content-type')).toBe('text/html; charset=utf-8');
 
-		const text = await response.text() as string;
+		const text = (await response.text()) as string;
 		expect(text).toBe(readFileSync(resolve(DIRNAME, 'static/index.html'), 'utf8'));
 	});
 });

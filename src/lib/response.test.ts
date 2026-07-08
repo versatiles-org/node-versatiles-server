@@ -1,18 +1,15 @@
- 
 import { IncomingMessage, ServerResponse } from 'http';
 import { Socket } from 'net';
-import { describe, it, expect,vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { ResponseContent } from './types.js';
 import type { Response } from './response.js';
 import { brotliCompressSync, gzipSync } from 'zlib';
-
 
 vi.mock('./log.js', () => ({
 	logImportant: vi.fn(),
 }));
 const { logImportant } = await import('./log.js');
 const { Response: ResponseClass } = await import('./response.js');
-
 
 type Compression = 'br' | 'gzip' | 'raw';
 
@@ -61,7 +58,9 @@ describe('Response Tests', () => {
 	});
 
 	describe('respond using different compressions', () => {
-		const testBuffer = Buffer.from('Governments of the Industrial World, you weary giants of flesh and steel, I come from Cyberspace, the new home of Mind.');
+		const testBuffer = Buffer.from(
+			'Governments of the Industrial World, you weary giants of flesh and steel, I come from Cyberspace, the new home of Mind.',
+		);
 		const buffers: Record<Compression, Buffer> = {
 			raw: Buffer.from(testBuffer),
 			gzip: gzipSync(testBuffer),
@@ -103,7 +102,6 @@ describe('Response Tests', () => {
 		];
 
 		for (const { buffer, accept, optimal, result } of cases) {
-			 
 			it(`${buffer} -> ${accept} (${optimal ? 'optimal' : 'fast'})`, async () => {
 				const content: ResponseContent = {
 					buffer: buffers[buffer],
@@ -111,8 +109,8 @@ describe('Response Tests', () => {
 					compression: buffer,
 				};
 				const config = {
-					acceptGzip: (accept === 'gzip') || (accept === 'gzip+br'),
-					acceptBr: (accept === 'br') || (accept === 'gzip+br'),
+					acceptGzip: accept === 'gzip' || accept === 'gzip+br',
+					acceptBr: accept === 'br' || accept === 'gzip+br',
 					optimalCompression: optimal,
 				};
 
@@ -120,9 +118,7 @@ describe('Response Tests', () => {
 
 				switch (result) {
 					case 'raw':
-						expect(vi.mocked(mockRes.setHeader).mock.calls).toStrictEqual([
-							['content-type', 'text/plain'],
-						]);
+						expect(vi.mocked(mockRes.setHeader).mock.calls).toStrictEqual([['content-type', 'text/plain']]);
 						break;
 					case 'gzip':
 						expect(vi.mocked(mockRes.setHeader).mock.calls).toStrictEqual([
@@ -141,7 +137,6 @@ describe('Response Tests', () => {
 				expect(mockRes.statusCode).toBe(200);
 				expect(mockRes.end).toHaveBeenCalledTimes(1);
 			});
-
 		}
 	});
 

@@ -2,7 +2,6 @@ import { Layer } from './layer.js';
 import { ServerOptions } from './types.js';
 import { describe, it, expect } from 'vitest';
 
-
 describe('Layer class', () => {
 	const filename = new URL('../../testdata/island.versatiles', import.meta.url).pathname;
 	const baseUrl = 'http://example.org:1234';
@@ -46,9 +45,7 @@ describe('Layer class', () => {
 			const style: unknown = JSON.parse(await layer.getStyle());
 			expect(style).toMatchObject({
 				glyphs: 'http://example.org:1234/assets/glyphs/{fontstack}/{range}.pbf',
-				sprite: [
-					{ id: 'basics', url: 'http://example.org:1234/assets/sprites/basics/sprites' },
-				]
+				sprite: [{ id: 'basics', url: 'http://example.org:1234/assets/sprites/basics/sprites' }],
 			});
 		});
 	});
@@ -56,7 +53,7 @@ describe('Layer class', () => {
 	describe('getMetadata', () => {
 		it('should return the correct metadata', async () => {
 			const layer = new Layer(filename, serverOptions);
-			const metadata = JSON.parse(await layer.getMetadata() ?? '');
+			const metadata = JSON.parse((await layer.getMetadata()) ?? '');
 			expect(metadata?.vector_layers?.length).toBe(26);
 		});
 	});

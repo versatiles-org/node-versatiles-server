@@ -3,7 +3,7 @@ import { ServerOptions } from './types.js';
 
 /**
  * Asynchronously generates a style string based on the given container and options.
- * 
+ *
  * @param {VersaTiles} container - An instance of the VersaTiles container.
  * @param {Record<string, any>} serverOptions - An object containing options for style generation.
  * @returns {Promise<string>} A promise that resolves to a style string.
@@ -12,7 +12,7 @@ import { ServerOptions } from './types.js';
 export function generateStyle(metadata: string, serverOptions: ServerOptions): string {
 	let tileJSON: TileJSONSpecification;
 	try {
-		tileJSON = JSON.parse(metadata)
+		tileJSON = JSON.parse(metadata);
 	} catch (cause) {
 		throw new Error('invalid metadata', { cause });
 	}

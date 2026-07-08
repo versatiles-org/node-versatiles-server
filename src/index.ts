@@ -51,7 +51,9 @@ program
 				await open(server.getUrl());
 			}
 		} catch (error: unknown) {
-			const errorMessage = String((typeof error == 'object' && error != null && 'message' in error) ? error.message : error);
+			const errorMessage = String(
+				typeof error == 'object' && error != null && 'message' in error ? error.message : error,
+			);
 			logImportant(`Error starting the server: ${errorMessage}`);
 			process.exit(1);
 		}

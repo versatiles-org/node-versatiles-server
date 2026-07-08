@@ -46,7 +46,11 @@ describe('getFileContent', () => {
 		expect(vi.mocked(existsSync).mock.calls).toStrictEqual([['/static/test/file.txt']]);
 		expect(vi.mocked(stat).mock.calls).toStrictEqual([['/static/test/file.txt']]);
 		expect(vi.mocked(readFile).mock.calls).toStrictEqual([['/static/test/file.txt']]);
-		expect(result).toStrictEqual({ buffer: 'readFile(/static/test/file.txt)', compression: 'raw', mime: 'application/octet-stream' });
+		expect(result).toStrictEqual({
+			buffer: 'readFile(/static/test/file.txt)',
+			compression: 'raw',
+			mime: 'application/octet-stream',
+		});
 	});
 
 	it('returns index.html path for directories', async () => {
@@ -58,10 +62,17 @@ describe('getFileContent', () => {
 			.mockReturnValueOnce(true); // False for index.html existence
 
 		const result = await getFileContent('/static', '/test/directory');
-		expect(vi.mocked(existsSync).mock.calls).toStrictEqual([['/static/test/directory'], ['/static/test/directory/index.html']]);
+		expect(vi.mocked(existsSync).mock.calls).toStrictEqual([
+			['/static/test/directory'],
+			['/static/test/directory/index.html'],
+		]);
 		expect(vi.mocked(stat).mock.calls).toStrictEqual([['/static/test/directory']]);
 		expect(vi.mocked(readFile).mock.calls).toStrictEqual([['/static/test/directory/index.html']]);
-		expect(result).toStrictEqual({ buffer: 'readFile(/static/test/directory/index.html)', compression: 'raw', mime: 'text/html; charset=utf-8' });
+		expect(result).toStrictEqual({
+			buffer: 'readFile(/static/test/directory/index.html)',
+			compression: 'raw',
+			mime: 'text/html; charset=utf-8',
+		});
 	});
 
 	it('returns undefined for directories without an index.html', async () => {
@@ -71,7 +82,10 @@ describe('getFileContent', () => {
 		// @ts-expect-error: too lazy to fix this
 		vi.mocked(stat).mockResolvedValue({ isDirectory: () => true });
 		const result = await getFileContent('/static', '/test/directory');
-		expect(vi.mocked(existsSync).mock.calls).toStrictEqual([['/static/test/directory'], ['/static/test/directory/index.html']]);
+		expect(vi.mocked(existsSync).mock.calls).toStrictEqual([
+			['/static/test/directory'],
+			['/static/test/directory/index.html'],
+		]);
 		expect(vi.mocked(stat).mock.calls).toStrictEqual([['/static/test/directory']]);
 		expect(vi.mocked(readFile).mock.calls).toStrictEqual([]);
 		expect(result).toBeUndefined();

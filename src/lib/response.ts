@@ -4,20 +4,22 @@ import { brotli, gzip, unbrotli, ungzip } from './compressors.js';
 import type { ResponseConfig, ResponseContent } from './types.js';
 import { logImportant } from './log.js';
 
-
 export class Response {
 	readonly #response: ServerResponse;
 
 	public constructor(response: ServerResponse) {
 		this.#response = response;
 	}
-	
+
 	public sendJSONString(json: string, config: ResponseConfig): Promise<void> {
-		return this.sendContent({
-			buffer: Buffer.from(json),
-			compression: 'raw',
-			mime: 'application/json; charset=utf-8'
-		}, config);
+		return this.sendContent(
+			{
+				buffer: Buffer.from(json),
+				compression: 'raw',
+				mime: 'application/json; charset=utf-8',
+			},
+			config,
+		);
 	}
 
 	public async sendContent(response: ResponseContent, config: ResponseConfig): Promise<void> {
@@ -75,6 +77,6 @@ export class Response {
 		logImportant(String(err));
 		this.#response.statusCode = code;
 		this.#response.setHeader('content-type', 'text/plain');
-		this.#response.end((typeof err == 'string') ? err : 'internal error');
+		this.#response.end(typeof err == 'string' ? err : 'internal error');
 	}
 }

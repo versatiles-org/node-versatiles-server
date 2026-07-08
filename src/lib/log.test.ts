@@ -1,6 +1,6 @@
 // Assuming the module above is named 'logger.js'
 import * as logger from './log.js';
-import { describe, it, expect,vi, beforeEach, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterAll } from 'vitest';
 
 describe('logger module', () => {
 	beforeEach(() => {

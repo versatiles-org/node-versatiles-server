@@ -22,8 +22,8 @@ describe('generateStyle', () => {
 		const styleString = generateStyle(validTileJSON, getServerOptions());
 		expect(JSON.parse(styleString)).toEqual({
 			version: 8,
-			layers: [{ id: 'raster', source: 'rasterSource', type: 'raster', },],
-			sources: { rasterSource: { tiles: ['http://localhost:8080/tiles/test/{z}/{x}/{y}'], type: 'raster', }, },
+			layers: [{ id: 'raster', source: 'rasterSource', type: 'raster' }],
+			sources: { rasterSource: { tiles: ['http://localhost:8080/tiles/test/{z}/{x}/{y}'], type: 'raster' } },
 		});
 	});
 
@@ -31,8 +31,8 @@ describe('generateStyle', () => {
 		const styleString = generateStyle(validTileJSON, getServerOptions('http://example.org:2345'));
 		expect(JSON.parse(styleString)).toEqual({
 			version: 8,
-			layers: [{ id: 'raster', source: 'rasterSource', type: 'raster', },],
-			sources: { rasterSource: { tiles: ['http://example.org:2345/tiles/test/{z}/{x}/{y}'], type: 'raster', }, },
+			layers: [{ id: 'raster', source: 'rasterSource', type: 'raster' }],
+			sources: { rasterSource: { tiles: ['http://example.org:2345/tiles/test/{z}/{x}/{y}'], type: 'raster' } },
 		});
 	});
 

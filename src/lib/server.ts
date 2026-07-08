@@ -30,7 +30,7 @@ export class Server {
 
 		this.#layer = new Layer(source, this.#options);
 
-		function urlJoin<T extends string | { id: string; url: string; }[]>(url: T): T {
+		function urlJoin<T extends string | { id: string; url: string }[]>(url: T): T {
 			if (typeof url === 'string') {
 				return new URL(url, baseUrl).href.replace(/%7B/g, '{').replace(/%7D/g, '}') as T;
 			}
@@ -95,7 +95,7 @@ export class Server {
 					}
 
 					if (path == '/tiles/default/tiles.json') {
-						return await response.sendJSONString(await this.#layer.getMetadata() ?? '', responseConfig);
+						return await response.sendJSONString((await this.#layer.getMetadata()) ?? '', responseConfig);
 					}
 
 					if (path == '/tiles/default/style.json') {
@@ -127,7 +127,6 @@ export class Server {
 					logImportant('Error 404: file not found: ' + path);
 					response.sendError('file not found: ' + path, 404);
 					return;
-
 				} catch (err) {
 					logImportant('Error 500: internal error: ' + String(err));
 					response.sendError(err, 500);
@@ -140,9 +139,11 @@ export class Server {
 
 		const { host, port } = this.#options;
 
-		await new Promise<void>(r => server.listen(port, host, () => {
-			r();
-		}));
+		await new Promise<void>((r) =>
+			server.listen(port, host, () => {
+				r();
+			}),
+		);
 
 		logImportant(`listening on port ${port}`);
 	}
@@ -152,7 +153,7 @@ export class Server {
 
 		await new Promise<void>((res, rej) => {
 			logInfo('stop server');
-			this.#server?.close(err => {
+			this.#server?.close((err) => {
 				if (err) rej(err);
 				else res();
 			});

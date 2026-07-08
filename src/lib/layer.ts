@@ -3,7 +3,6 @@ import { Container } from '@versatiles/container';
 import type { ResponseContent, ServerOptions } from './types.js';
 import { generateStyle } from './style.js';
 
-
 export class Layer {
 	readonly #container: Container;
 
@@ -14,7 +13,7 @@ export class Layer {
 	#compression?: Compression;
 
 	public constructor(source: Reader | string, serverOptions: ServerOptions) {
-		this.#serverOptions = serverOptions
+		this.#serverOptions = serverOptions;
 		this.#container = new Container(source, { tms: serverOptions?.tms ?? false });
 	}
 
@@ -22,7 +21,7 @@ export class Layer {
 		if (this.#header) return;
 
 		this.#header = await this.#container.getHeader();
-		this.#metadata = await this.#container.getMetadata() ?? '{}';
+		this.#metadata = (await this.#container.getMetadata()) ?? '{}';
 		this.#mime = this.#header.tileMime;
 		this.#compression = this.#header.tileCompression;
 	}

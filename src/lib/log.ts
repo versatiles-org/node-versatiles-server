@@ -1,4 +1,3 @@
-
 let doLogImportant = true;
 let doLogInfo = false;
 let doLogDebug = false;

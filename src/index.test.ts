@@ -5,11 +5,13 @@ import type { Server } from './lib/server.js';
 
 //const mockedServer = vi.fn<typeof Server>().mockReturnValue(null);
 vi.mock('./lib/server.js', () => ({
-	Server: vi.fn(class {
-		getUrl = vi.fn(() => 'https:/dingdong')
-		start = vi.fn(() => Promise.resolve())
-		stop = vi.fn(() => Promise.resolve())
-	}),
+	Server: vi.fn(
+		class {
+			getUrl = vi.fn(() => 'https:/dingdong');
+			start = vi.fn(() => Promise.resolve());
+			stop = vi.fn(() => Promise.resolve());
+		},
+	),
 }));
 const mockedServer = (await import('./lib/server.js')).Server as unknown as Mocked<Server>;
 
@@ -118,7 +120,7 @@ describe('index.ts', () => {
 		const moduleUrl = './index.js?t=' + Math.random().toString(16).slice(2);
 		const module = await import(moduleUrl);
 
-		const program = (module.program) as Command;
-		await program.parseAsync(['./node', './index.ts', ...args.split(' ').filter(a => a)]);
+		const program = module.program as Command;
+		await program.parseAsync(['./node', './index.ts', ...args.split(' ').filter((a) => a)]);
 	}
 });

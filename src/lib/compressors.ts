@@ -1,4 +1,3 @@
-
 import zlib from 'zlib';
 
 /**
@@ -15,8 +14,7 @@ export async function gzip(dataIn: Buffer): Promise<Buffer> {
 			}
 			res(dataOut);
 		});
-	},
-	);
+	});
 }
 
 /**
@@ -33,8 +31,7 @@ export async function ungzip(dataIn: Buffer): Promise<Buffer> {
 			}
 			res(dataOut);
 		});
-	},
-	);
+	});
 }
 
 /**
@@ -51,8 +48,7 @@ export async function brotli(dataIn: Buffer): Promise<Buffer> {
 			}
 			res(dataOut);
 		});
-	},
-	);
+	});
 }
 
 /**
@@ -69,6 +65,5 @@ export async function unbrotli(dataIn: Buffer): Promise<Buffer> {
 			}
 			res(dataOut);
 		});
-	},
-	);
+	});
 }
