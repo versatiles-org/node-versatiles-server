@@ -56,22 +56,22 @@
     "versatiles"
   ],
   "dependencies": {
-    "@versatiles/container": "^1.4.2",
-    "@versatiles/style": "^5.12.0",
+    "@versatiles/container": "^1.5.0",
+    "@versatiles/style": "^5.13.0",
     "commander": "^15.0.0",
     "open": "^11.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "^26.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.59.3",
-    "@typescript-eslint/parser": "^8.59.3",
-    "@versatiles/release-tool": "^2.8.0",
-    "@vitest/coverage-v8": "^4.1.6",
-    "eslint": "^10.4.0",
-    "tsx": "^4.22.0",
+    "@types/node": "^26.1.1",
+    "@typescript-eslint/eslint-plugin": "^8.63.0",
+    "@typescript-eslint/parser": "^8.63.0",
+    "@versatiles/release-tool": "^2.8.1",
+    "@vitest/coverage-v8": "^4.1.10",
+    "eslint": "^10.6.0",
+    "tsx": "^4.23.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.59.3",
-    "vitest": "^4.1.6"
+    "typescript-eslint": "^8.63.0",
+    "vitest": "^4.1.10"
   }
 }
