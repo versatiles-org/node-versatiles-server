@@ -26,6 +26,7 @@
 		"start": "tsx src/index.ts",
 		"test-coverage": "vitest --run --coverage",
 		"test": "vitest --run",
+		"update-frontend": "./scripts/update-frontend.sh",
 		"upgrade": "vrt deps-upgrade"
 	},
 	"repository": {
