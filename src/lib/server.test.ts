@@ -152,6 +152,79 @@ describe('static files', () => {
 	});
 });
 
+describe('multiple sources', () => {
+	let server: Server;
+	const port = 56790;
+	const baseUrl = `http://localhost:${port}`;
+	const island = resolve(DIRNAME, 'testdata/island.versatiles');
+
+	beforeAll(async () => {
+		server = new ServerClass(
+			[
+				{ id: 'osm', source: island },
+				{ id: 'satellite', source: island },
+			],
+			{ port, compress: true },
+		);
+		await server.start();
+	});
+
+	afterAll(async () => {
+		await server.stop();
+	});
+
+	it('lists all layers in the index', async () => {
+		const response = await fetch(`${baseUrl}/tiles/index.json`);
+		expect(response.status).toBe(200);
+		expect(await response.json()).toEqual(['osm', 'satellite']);
+	});
+
+	it('serves tiles for each layer', async () => {
+		for (const id of ['osm', 'satellite']) {
+			const response = await fetch(`${baseUrl}/tiles/${id}/8/55/67`);
+			expect(response.status).toBe(200);
+			expect(response.headers.get('content-type')).toBe('application/x-protobuf');
+		}
+	});
+
+	it('points each layer style at its own tile endpoint', async () => {
+		const response = await fetch(`${baseUrl}/tiles/satellite/style.json`);
+		expect(response.status).toBe(200);
+		const style = (await response.json()) as { sources: Record<string, { tiles?: string[] }> };
+		const tiles = Object.values(style.sources)[0].tiles ?? [];
+		expect(tiles).toEqual([`${baseUrl}/tiles/satellite/{z}/{x}/{y}`]);
+	});
+
+	it('serves per-layer metadata', async () => {
+		const response = await fetch(`${baseUrl}/tiles/osm/tiles.json`);
+		expect(response.status).toBe(200);
+		expect(response.headers.get('content-type')).toContain('application/json');
+	});
+
+	it('responds with 404 for an unknown layer', async () => {
+		const response = await fetch(`${baseUrl}/tiles/unknown/8/55/67`);
+		expect(response.status).toBe(404);
+		expect(await response.text()).toBe('tile not found: /tiles/unknown/8/55/67');
+	});
+
+	it('rejects duplicate source ids', () => {
+		expect(
+			() =>
+				new ServerClass(
+					[
+						{ id: 'osm', source: island },
+						{ id: 'osm', source: island },
+					],
+					{ port: port + 1 },
+				),
+		).toThrow('duplicate source id: "osm"');
+	});
+
+	it('rejects an empty source list', () => {
+		expect(() => new ServerClass([], { port: port + 1 })).toThrow('source not defined');
+	});
+});
+
 async function getResponseHash(response: Response): Promise<string> {
 	const hasher = createHash('sha256');
 	hasher.update(Buffer.from(await response.arrayBuffer()));

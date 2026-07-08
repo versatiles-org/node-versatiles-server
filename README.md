@@ -34,13 +34,16 @@ versatiles-server planet.versatiles
 
 ```console
 $ versatiles-server
-Usage: versatiles-server [options] <source>
+Usage: versatiles-server [options] <sources...>
 
 Simple VersaTiles server
 
 Arguments:
-  source                   VersaTiles container, can be a URL or filename of a
-                           "*.versatiles" file
+  sources                  One or more VersaTiles containers (URL or
+                           "*.versatiles" file). A single source is served as
+                           layer "default"; multiple sources are each served
+                           under a layer named after their filename (e.g.
+                           "osm.versatiles" → /tiles/osm/…).
 
 Options:
   -b, --base-url <url>     Base URL for the server (default:

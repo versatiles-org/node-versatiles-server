@@ -15,14 +15,41 @@
 				width: 100vw;
 				height: 100vh;
 			}
+
+			#layers {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				z-index: 1;
+				padding: 4px 8px;
+				font: 14px/1.4 sans-serif;
+				background: #fff;
+				border-radius: 4px;
+				box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+			}
+
+			#layers[hidden] {
+				display: none;
+			}
 		</style>
 	</head>
 
 	<body>
+		<select id="layers" hidden></select>
 		<div id="map"></div>
 		<script>
 			(async () => {
-				const style = await (await fetch('tiles/default/style.json')).json();
+				const layers = await (await fetch('tiles/index.json')).json();
+				if (!layers.length) throw new Error('no tile layers available');
+
+				// Prefer the "default" layer (single-source mode), otherwise the first one.
+				let current = layers.includes('default') ? 'default' : layers[0];
+
+				async function loadStyle(id) {
+					return (await fetch(`tiles/${id}/style.json`)).json();
+				}
+
+				const style = await loadStyle(current);
 
 				const mapOptions = {
 					container: 'map',
@@ -33,11 +60,26 @@
 				};
 
 				const source = Object.values(style.sources)[0];
-				if (source.bounds) mapOptions.bounds = source.bounds;
+				if (source && source.bounds) mapOptions.bounds = source.bounds;
 
 				const map = new maplibregl.Map(mapOptions);
-
 				map.addControl(new maplibregl.NavigationControl({ showCompass: false, visualizePitch: false }));
+
+				// Offer a layer switcher when more than one source is served.
+				if (layers.length > 1) {
+					const select = document.getElementById('layers');
+					for (const id of layers) {
+						const option = document.createElement('option');
+						option.value = option.textContent = id;
+						if (id === current) option.selected = true;
+						select.appendChild(option);
+					}
+					select.hidden = false;
+					select.addEventListener('change', async () => {
+						current = select.value;
+						map.setStyle(await loadStyle(current));
+					});
+				}
 			})();
 		</script>
 	</body>

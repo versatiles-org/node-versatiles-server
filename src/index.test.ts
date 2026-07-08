@@ -54,6 +54,17 @@ describe('index.ts', () => {
 		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults });
 	});
 
+	it('starts server with multiple sources as named layers', async () => {
+		await run('osm.versatiles satellite.versatiles');
+		expect(mockedServer).toHaveBeenCalledWith(
+			[
+				{ id: 'osm', source: 'osm.versatiles' },
+				{ id: 'satellite', source: 'satellite.versatiles' },
+			],
+			{ ...defaultResults },
+		);
+	});
+
 	it('starts server with baseurl', async () => {
 		await run(defaultSource + ' -b https://example.org');
 		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults, baseUrl: 'https://example.org' });
@@ -123,4 +134,18 @@ describe('index.ts', () => {
 		const program = module.program as Command;
 		await program.parseAsync(['./node', './index.ts', ...args.split(' ').filter((a) => a)]);
 	}
+});
+
+describe('sourceToId', () => {
+	it('derives a layer id from a URL', async () => {
+		const { sourceToId } = await import('./index.js');
+		expect(sourceToId('https://download.versatiles.org/osm.versatiles')).toBe('osm');
+		expect(sourceToId('https://download.versatiles.org/osm.versatiles?token=abc')).toBe('osm');
+	});
+
+	it('derives a layer id from a file path', async () => {
+		const { sourceToId } = await import('./index.js');
+		expect(sourceToId('./data/satellite.versatiles')).toBe('satellite');
+		expect(sourceToId('elevation.versatiles')).toBe('elevation');
+	});
 });

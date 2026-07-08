@@ -2,10 +2,20 @@
 
 import { Command } from 'commander';
 import type { ServerOptions } from './lib/types.js';
+import type { SourceSpec } from './lib/server.js';
 import open from 'open';
 import { Server } from './lib/server.js';
 import { resolve } from 'path';
 import { logImportant, setLogLevel } from './lib/log.js';
+
+/**
+ * Derives the layer id a source is served under from its URL or filename,
+ * e.g. "https://…/osm.versatiles" or "./data/osm.versatiles" → "osm".
+ */
+export function sourceToId(source: string): string {
+	const base = source.split(/[?#]/)[0].replace(/\/+$/, '').split('/').pop() ?? source;
+	return base.replace(/\.versatiles$/i, '') || base;
+}
 
 /**
  * Entry script for the VersaTiles server command-line application.
@@ -27,8 +37,13 @@ program
 	.option('-s, --static <folder>', 'Path to a folder with static files')
 	.option('-t, --tms', 'Use TMS tile order (flip y axis)')
 	.option('-v, --verbose', 'be verbose', (_, previous) => previous + 1, 0)
-	.argument('<source>', 'VersaTiles container, can be a URL or filename of a "*.versatiles" file')
-	.action(async (source: string, cmdOptions: Record<string, unknown>) => {
+	.argument(
+		'<sources...>',
+		'One or more VersaTiles containers (URL or "*.versatiles" file). ' +
+			'A single source is served as layer "default"; multiple sources are each served ' +
+			'under a layer named after their filename (e.g. "osm.versatiles" → /tiles/osm/…).',
+	)
+	.action(async (sources: string[], cmdOptions: Record<string, unknown>) => {
 		const srvOptions: Partial<ServerOptions> = {
 			baseUrl: cmdOptions.baseUrl as string | undefined,
 			compress: Boolean(cmdOptions.compress),
@@ -40,10 +55,15 @@ program
 
 		setLogLevel(cmdOptions.quiet ? 0 : Number(cmdOptions.verbose ?? 0) + 1);
 
-		if (!source) throw Error('source not defined');
+		if (!sources || sources.length === 0) throw Error('source not defined');
+
+		// A single source keeps the historical behaviour (served as layer "default");
+		// multiple sources become named layers derived from their filenames.
+		const serverSource: string | SourceSpec[] =
+			sources.length === 1 ? sources[0] : sources.map((source) => ({ id: sourceToId(source), source }));
 
 		try {
-			const server = new Server(source, srvOptions);
+			const server = new Server(serverSource, srvOptions);
 			void server.start();
 
 			if (cmdOptions.open) {
