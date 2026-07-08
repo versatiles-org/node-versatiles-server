@@ -35,7 +35,7 @@ describe('Layer class', () => {
 		it('should handle null response for non-existent tiles', async () => {
 			const layer = new Layer(filename, serverOptions);
 			const tileFunc = await layer.getTileFunction();
-			expect(await tileFunc(1, 2, 3)).toBeNull();
+			expect(await tileFunc(3, 2, 1)).toBeNull();
 		});
 	});
 
