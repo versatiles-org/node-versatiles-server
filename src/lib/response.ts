@@ -73,10 +73,26 @@ export class Response {
 		this.#response.end(data);
 	}
 
-	public sendError(err: unknown, code = 500): void {
+	/**
+	 * Sends a plain-text error message that the caller has explicitly chosen.
+	 * Never pass a caught exception here - use {@link sendInternalError} instead,
+	 * so that no exception details (message, stack trace) can reach the client.
+	 */
+	public sendError(message: string, code = 500): void {
+		logImportant(message);
+		this.#response.statusCode = code;
+		this.#response.setHeader('content-type', 'text/plain');
+		this.#response.end(message);
+	}
+
+	/**
+	 * Handles an unexpected exception: the details are logged on the server only,
+	 * while the client receives a generic message.
+	 */
+	public sendInternalError(err: unknown, code = 500): void {
 		logImportant(String(err));
 		this.#response.statusCode = code;
 		this.#response.setHeader('content-type', 'text/plain');
-		this.#response.end(typeof err == 'string' ? err : 'internal error');
+		this.#response.end('internal error');
 	}
 }

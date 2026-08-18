@@ -164,7 +164,7 @@ export class Server {
 					return;
 				} catch (err) {
 					logImportant('Error 500: internal error: ' + String(err));
-					response.sendError(err, 500);
+					response.sendInternalError(err, 500);
 					return;
 				}
 			})();

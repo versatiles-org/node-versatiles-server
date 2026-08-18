@@ -143,7 +143,7 @@ describe('Response Tests', () => {
 	describe('respond with error', () => {
 		it('should handle error responses', () => {
 			const error = new Error('Test Error');
-			response.sendError(error, 500);
+			response.sendInternalError(error, 500);
 
 			expect(logImportant).toHaveBeenCalledWith('Error: Test Error');
 			expect(mockRes.setHeader).toHaveBeenCalledWith('content-type', 'text/plain');
