@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] - 2026-08-18
+
+### Bug Fixes
+
+- update funding information in FUNDING.yml ([1ae1934](https://github.com/versatiles-org/node-versatiles/commit/1ae1934f7e48c15fdf28f808c0151f1980cb6926))
+- ensure errors do not expose trace information ([c8699b1](https://github.com/versatiles-org/node-versatiles/commit/c8699b1feda1e96d094ebfc5058635f73eaec32f))
+- improve sourceToId function to handle trailing slashes more efficiently ([6956f75](https://github.com/versatiles-org/node-versatiles/commit/6956f75f508182737c18d7ee04853bbf7af01961))
+
+### Build System
+
+- **deps:** bump actions/setup-node ([60ac36c](https://github.com/versatiles-org/node-versatiles/commit/60ac36c06d53071206936d39300a90b1b9d8f4a7))
+
+### Chores
+
+- add security update groups for GitHub Actions and npm in dependabot configuration ([c80a5f3](https://github.com/versatiles-org/node-versatiles/commit/c80a5f3501157a0637182bd278b60ef414391e6b))
+- update dependencies and devDependencies in package.json ([372081d](https://github.com/versatiles-org/node-versatiles/commit/372081d24b02af30dc8aa6365b71d4a6e866ca26))
+
 ## [1.7.0] - 2026-07-08
 
 ### Features
