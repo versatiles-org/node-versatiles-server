@@ -13,7 +13,11 @@ import { logImportant, setLogLevel } from './lib/log.js';
  * e.g. "https://…/osm.versatiles" or "./data/osm.versatiles" → "osm".
  */
 export function sourceToId(source: string): string {
-	const base = source.split(/[?#]/)[0].replace(/\/+$/, '').split('/').pop() ?? source;
+	// Trailing slashes are dropped by popping empty segments instead of with a
+	// `/\/+$/` regex, which backtracks quadratically on slash-heavy input.
+	const segments = source.split(/[?#]/)[0].split('/');
+	while (segments.length > 1 && segments[segments.length - 1] === '') segments.pop();
+	const base = segments[segments.length - 1];
 	return base.replace(/\.versatiles$/i, '') || base;
 }
 
