@@ -60,24 +60,22 @@
     "versatiles"
   ],
   "dependencies": {
-    "@versatiles/container": "^1.5.1",
-    "@versatiles/style": "^5.13.1",
+    "@versatiles/container": "^2.0.1",
+    "@versatiles/style": "^6.1.1",
     "commander": "^15.0.0",
-    "open": "^11.0.1"
+    "open": "^11.0.4"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "^26.2.0",
-    "@typescript-eslint/eslint-plugin": "^8.67.0",
-    "@typescript-eslint/parser": "^8.67.0",
-    "@versatiles/release-tool": "^2.9.1",
-    "@vitest/coverage-v8": "^4.1.11",
-    "eslint": "^10.8.1",
-    "prettier": "^3.9.6",
-    "tsx": "^4.23.12",
+    "@types/node": "^26.6.4",
+    "@versatiles/release-tool": "^2.19.1",
+    "@vitest/coverage-v8": "^5.0.3",
+    "eslint": "^10.12.0",
+    "prettier": "^3.9.9",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.67.0",
-    "vitest": "^4.1.11"
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^5.0.3"
   },
   "allowScripts": {
     "esbuild": true,
