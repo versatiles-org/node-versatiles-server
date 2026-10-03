@@ -9,7 +9,7 @@ import { ServerOptions } from './types.js';
  * @returns {Promise<string>} A promise that resolves to a style string.
  */
 
-export function generateStyle(metadata: string, serverOptions: ServerOptions): string {
+export async function generateStyle(metadata: string, serverOptions: ServerOptions): Promise<string> {
 	let tileJSON: TileJSONSpecification;
 	try {
 		tileJSON = JSON.parse(metadata);
@@ -19,10 +19,12 @@ export function generateStyle(metadata: string, serverOptions: ServerOptions): s
 
 	tileJSON.tiles = [serverOptions.tilesUrl];
 
-	const style = guessStyle(tileJSON, {
-		baseUrl: serverOptions.baseUrl,
-		sprite: serverOptions.sprites,
-		glyphs: serverOptions.glyphs,
+	const style = await guessStyle(tileJSON, {
+		urls: {
+			base: serverOptions.baseUrl,
+			sprite: serverOptions.sprites,
+			glyphsPattern: serverOptions.glyphs,
+		},
 	});
 
 	return JSON.stringify(style);
