@@ -1,7 +1,5 @@
 import js from '@eslint/js';
 import ts from 'typescript-eslint';
-import parser from '@typescript-eslint/parser';
-import eslint_plugin from '@typescript-eslint/eslint-plugin';
 
 export default [
 	js.configs.recommended,
@@ -19,7 +17,7 @@ export default [
 				es6: true,
 				node: true,
 			},
-			parser,
+			parser: ts.parser,
 			parserOptions: {
 				sourceType: 'module',
 				project: './tsconfig.json',
@@ -27,7 +25,7 @@ export default [
 			},
 		},
 		plugins: {
-			'@typescript-eslint': eslint_plugin,
+			'@typescript-eslint': ts.plugin,
 		},
 		linterOptions: {
 			reportUnusedDisableDirectives: true,
