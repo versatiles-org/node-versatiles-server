@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.2] - 2026-10-03
+
+### Bug Fixes
+
+- update eslint configuration to use typescript-eslint parser and plugin ([2705360](https://github.com/versatiles-org/node-versatiles/commit/270536033f77a315ddd423774768108fbc48644b))
+- update generateStyle function to be asynchronous and adjust style generation logic ([2abfd4b](https://github.com/versatiles-org/node-versatiles/commit/2abfd4b3e54b2ccb419c084dd6c6c2319e3b9340))
+
+### Chores
+
+- add ignore rule for typescript dependency in dependabot configuration ([1e875a3](https://github.com/versatiles-org/node-versatiles/commit/1e875a347ed11626b95d79dd6730a1b386135a20))
+- update dependencies to latest versions ([8a99a77](https://github.com/versatiles-org/node-versatiles/commit/8a99a775f167c916fac99901df853bb288680819))
+- update brace-expansion and markdown-it packages to latest versions ([3c2df9b](https://github.com/versatiles-org/node-versatiles/commit/3c2df9b0315d53c0ef8aabdda84042850396ffb6))
+
 ## [1.7.1] - 2026-08-18
 
 ### Bug Fixes
