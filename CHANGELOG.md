@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.3] - 2026-10-12
+
+### Chores
+
+- update dependencies to latest versions ([0aadff9](https://github.com/versatiles-org/node-versatiles/commit/0aadff9bbbb809be420a61a15dfe5048b2084143))
+
 ## [1.7.2] - 2026-10-03
 
 ### Bug Fixes
