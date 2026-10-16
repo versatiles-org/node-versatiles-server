@@ -61,7 +61,7 @@
   ],
   "dependencies": {
     "@versatiles/container": "^2.0.2",
-    "@versatiles/style": "^6.4.0",
+    "@versatiles/style": "^7.0.1",
     "commander": "^15.0.0",
     "open": "^11.0.4"
   },
@@ -69,13 +69,13 @@
     "@eslint/js": "^10.0.1",
     "@types/node": "^26.6.5",
     "@versatiles/release-tool": "^2.20.0",
-    "@vitest/coverage-v8": "^5.0.3",
+    "@vitest/coverage-v8": "^5.0.5",
     "eslint": "^10.12.0",
     "prettier": "^3.9.10",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.71.1",
-    "vitest": "^5.0.3"
+    "typescript-eslint": "^8.71.2",
+    "vitest": "^5.0.5"
   },
   "allowScripts": {
     "esbuild": true,
