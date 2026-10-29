@@ -106,7 +106,7 @@ describe('Server', () => {
 		const response = await fetch(`${baseUrl}/tiles/default/8/55/67`);
 
 		expect(response.status).toBe(200);
-		expect(response.headers.get('content-type')).toBe('application/x-protobuf');
+		expect(response.headers.get('content-type')).toBe('application/vnd.mapbox-vector-tile');
 		expect(await getResponseHash(response)).toBe('ISZuz4Nvv0yCNnZQpLxATu6lYTB5conusgV42FIYBm4=');
 	});
 
@@ -114,7 +114,7 @@ describe('Server', () => {
 		const response = await fetch(`${baseUrl}/tiles/default/14/3740/4505`);
 
 		expect(response.status).toBe(200);
-		expect(response.headers.get('content-type')).toBe('application/x-protobuf');
+		expect(response.headers.get('content-type')).toBe('application/vnd.mapbox-vector-tile');
 		expect(await getResponseHash(response)).toBe('yubXQj2G+xYXgIDaUXzPHqnhghRnjAUgFMe8mSQEE2A=');
 	});
 
@@ -204,7 +204,7 @@ describe('multiple sources', () => {
 		for (const id of ['osm', 'satellite']) {
 			const response = await fetch(`${baseUrl}/tiles/${id}/8/55/67`);
 			expect(response.status).toBe(200);
-			expect(response.headers.get('content-type')).toBe('application/x-protobuf');
+			expect(response.headers.get('content-type')).toBe('application/vnd.mapbox-vector-tile');
 		}
 	});
 

@@ -29,7 +29,7 @@ describe('Layer class', () => {
 			const tileResponse = await tileFunc(8, 55, 67);
 			expect(tileResponse).toBeDefined();
 			expect(tileResponse?.buffer.length).toBe(3548);
-			expect(tileResponse?.mime).toBe('application/x-protobuf');
+			expect(tileResponse?.mime).toBe('application/vnd.mapbox-vector-tile');
 			expect(tileResponse?.compression).toBe('br');
 		});
 
