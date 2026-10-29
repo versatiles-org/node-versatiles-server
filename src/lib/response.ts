@@ -72,6 +72,7 @@ export class Response {
 
 		this.#response.statusCode = 200;
 		this.#response.setHeader('content-type', mime);
+		this.#response.setHeader('x-content-type-options', 'nosniff');
 		this.#response.end(data);
 	}
 
@@ -84,6 +85,7 @@ export class Response {
 		logImportant(message);
 		this.#response.statusCode = code;
 		this.#response.setHeader('content-type', 'text/plain');
+		this.#response.setHeader('x-content-type-options', 'nosniff');
 		this.#response.end(message);
 	}
 
@@ -95,6 +97,7 @@ export class Response {
 		logImportant(String(err));
 		this.#response.statusCode = code;
 		this.#response.setHeader('content-type', 'text/plain');
+		this.#response.setHeader('x-content-type-options', 'nosniff');
 		this.#response.end('internal error');
 	}
 }

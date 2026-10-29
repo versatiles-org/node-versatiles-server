@@ -42,6 +42,7 @@ describe('Response Tests', () => {
 
 			expect(mockRes.setHeader).toHaveBeenCalledWith('content-type', 'text/plain');
 			expect(mockRes.setHeader).toHaveBeenCalledWith('vary', 'accept-encoding');
+			expect(mockRes.setHeader).toHaveBeenCalledWith('x-content-type-options', 'nosniff');
 			expect(mockRes.statusCode).toBe(200);
 			expect(mockRes.end).toHaveBeenCalledWith(Buffer.from('test'));
 		});
@@ -122,6 +123,7 @@ describe('Response Tests', () => {
 						expect(vi.mocked(mockRes.setHeader).mock.calls).toStrictEqual([
 							['vary', 'accept-encoding'],
 							['content-type', 'text/plain'],
+							['x-content-type-options', 'nosniff'],
 						]);
 						break;
 					case 'gzip':
@@ -129,6 +131,7 @@ describe('Response Tests', () => {
 							['content-encoding', 'gzip'],
 							['vary', 'accept-encoding'],
 							['content-type', 'text/plain'],
+							['x-content-type-options', 'nosniff'],
 						]);
 						break;
 					case 'br':
@@ -136,6 +139,7 @@ describe('Response Tests', () => {
 							['content-encoding', 'br'],
 							['vary', 'accept-encoding'],
 							['content-type', 'text/plain'],
+							['x-content-type-options', 'nosniff'],
 						]);
 						break;
 				}
@@ -153,6 +157,7 @@ describe('Response Tests', () => {
 
 			expect(logImportant).toHaveBeenCalledWith('Error: Test Error');
 			expect(mockRes.setHeader).toHaveBeenCalledWith('content-type', 'text/plain');
+			expect(mockRes.setHeader).toHaveBeenCalledWith('x-content-type-options', 'nosniff');
 			expect(mockRes.statusCode).toBe(500);
 			expect(mockRes.end).toHaveBeenCalledWith('internal error');
 		});
@@ -162,6 +167,7 @@ describe('Response Tests', () => {
 
 			expect(logImportant).toHaveBeenCalledWith('message');
 			expect(mockRes.setHeader).toHaveBeenCalledWith('content-type', 'text/plain');
+			expect(mockRes.setHeader).toHaveBeenCalledWith('x-content-type-options', 'nosniff');
 			expect(mockRes.statusCode).toBe(500);
 			expect(mockRes.end).toHaveBeenCalledWith('message');
 		});
