@@ -8,6 +8,9 @@ export async function getFileContent(staticFolder: string, path: string): Promis
 	// Backslashes would act as path separators on Windows, null bytes are never valid.
 	if (/[\\\0]/.test(path)) return;
 
+	// Never expose hidden files or folders such as ".env" or ".git".
+	if (/(^|\/)\./.test(path)) return;
+
 	let filename = resolve(staticFolder, path.replace(/^\/+/, ''));
 
 	// Must stay inside the folder: a plain prefix check would also accept siblings like "<folder>-secret".

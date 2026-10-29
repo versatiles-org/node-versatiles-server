@@ -41,6 +41,13 @@ describe('getFileContent', () => {
 		expect(vi.mocked(existsSync).mock.calls).toStrictEqual([]);
 	});
 
+	it('returns undefined for hidden files and folders', async () => {
+		expect(await getFileContent('/static', '/.env')).toBeUndefined();
+		expect(await getFileContent('/static', '/.git/config')).toBeUndefined();
+		expect(await getFileContent('/static', '/sub/.DS_Store')).toBeUndefined();
+		expect(vi.mocked(existsSync).mock.calls).toStrictEqual([]);
+	});
+
 	it('returns undefined if the file does not exist', async () => {
 		vi.mocked(existsSync).mockReturnValue(false);
 		const result = await getFileContent('/static', '/test/file.txt');
