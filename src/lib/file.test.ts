@@ -29,6 +29,18 @@ describe('getFileContent', () => {
 		expect(result).toBeUndefined();
 	});
 
+	it('returns undefined for sibling folders sharing the static folder prefix', async () => {
+		const result = await getFileContent('/static', '/../static-secret/file.txt');
+		expect(vi.mocked(existsSync).mock.calls).toStrictEqual([]);
+		expect(result).toBeUndefined();
+	});
+
+	it('returns undefined for paths containing backslashes or null bytes', async () => {
+		expect(await getFileContent('/static', '/..\\static-secret\\file.txt')).toBeUndefined();
+		expect(await getFileContent('/static', '/file.txt\0')).toBeUndefined();
+		expect(vi.mocked(existsSync).mock.calls).toStrictEqual([]);
+	});
+
 	it('returns undefined if the file does not exist', async () => {
 		vi.mocked(existsSync).mockReturnValue(false);
 		const result = await getFileContent('/static', '/test/file.txt');
