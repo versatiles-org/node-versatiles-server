@@ -1,4 +1,5 @@
 import { createServer } from 'http';
+import { fileURLToPath } from 'url';
 import { Layer } from './layer.js';
 import { Response } from './response.js';
 import type { Reader } from '@versatiles/container';
@@ -7,7 +8,7 @@ import type { Server as httpServer } from 'http';
 import { getFileContent } from './file.js';
 import { logDebug, logImportant, logInfo } from './log.js';
 
-const STATIC_DIRNAME = new URL('../../static', import.meta.url).pathname;
+const STATIC_DIRNAME = fileURLToPath(new URL('../../static', import.meta.url));
 
 /** A tile source together with the id it is served under (e.g. `/tiles/<id>/…`). */
 export interface SourceSpec {
