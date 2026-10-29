@@ -26,6 +26,7 @@
     "release": "vrt release-npm",
     "start": "tsx src/index.ts",
     "test-coverage": "vitest --run --coverage",
+    "test-smoke": "tsx scripts/smoke-test.ts",
     "test": "vitest --run",
     "update-frontend": "./scripts/update-frontend.sh",
     "upgrade": "vrt deps-upgrade"
