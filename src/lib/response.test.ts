@@ -41,6 +41,7 @@ describe('Response Tests', () => {
 			await response.sendContent(content, config);
 
 			expect(mockRes.setHeader).toHaveBeenCalledWith('content-type', 'text/plain');
+			expect(mockRes.setHeader).toHaveBeenCalledWith('vary', 'accept-encoding');
 			expect(mockRes.statusCode).toBe(200);
 			expect(mockRes.end).toHaveBeenCalledWith(Buffer.from('test'));
 		});
@@ -118,17 +119,22 @@ describe('Response Tests', () => {
 
 				switch (result) {
 					case 'raw':
-						expect(vi.mocked(mockRes.setHeader).mock.calls).toStrictEqual([['content-type', 'text/plain']]);
+						expect(vi.mocked(mockRes.setHeader).mock.calls).toStrictEqual([
+							['vary', 'accept-encoding'],
+							['content-type', 'text/plain'],
+						]);
 						break;
 					case 'gzip':
 						expect(vi.mocked(mockRes.setHeader).mock.calls).toStrictEqual([
 							['content-encoding', 'gzip'],
+							['vary', 'accept-encoding'],
 							['content-type', 'text/plain'],
 						]);
 						break;
 					case 'br':
 						expect(vi.mocked(mockRes.setHeader).mock.calls).toStrictEqual([
 							['content-encoding', 'br'],
+							['vary', 'accept-encoding'],
 							['content-type', 'text/plain'],
 						]);
 						break;

@@ -67,6 +67,8 @@ export class Response {
 		}
 
 		if (compression !== 'raw') this.#response.setHeader('content-encoding', compression);
+		// The encoding depends on the request's Accept-Encoding, so caches must not mix them up.
+		this.#response.setHeader('vary', 'accept-encoding');
 
 		this.#response.statusCode = 200;
 		this.#response.setHeader('content-type', mime);
