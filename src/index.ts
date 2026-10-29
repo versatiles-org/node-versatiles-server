@@ -34,7 +34,11 @@ program
 	.description('Simple VersaTiles server')
 	.option('-b, --base-url <url>', 'Base URL for the server (default: "http://localhost:<port>/")')
 	.option('-c, --compress', 'Reduces traffic by recompressing data, but responses take longer. Perfect if behind CDN.')
-	.option('-h, --host <hostnameip>', 'Hostname or IP to bind the server to', '0.0.0.0')
+	.option(
+		'-h, --host <hostnameip>',
+		'Hostname or IP to bind the server to (use "0.0.0.0" to listen on all interfaces)',
+		'127.0.0.1',
+	)
 	.option('-o, --open', 'Open map in web browser')
 	.option('-p, --port <port>', 'Port to bind the server to (default: 8080)')
 	.option('-q, --quiet', 'be quiet')
@@ -51,7 +55,7 @@ program
 		const srvOptions: Partial<ServerOptions> = {
 			baseUrl: cmdOptions.baseUrl as string | undefined,
 			compress: Boolean(cmdOptions.compress),
-			host: String(cmdOptions.host ?? '0.0.0.0'),
+			host: String(cmdOptions.host ?? '127.0.0.1'),
 			port: Number(cmdOptions.port ?? 8080),
 			static: cmdOptions.static != null ? resolve(process.cwd(), cmdOptions.static as string) : undefined,
 			tms: Boolean(cmdOptions.tms),

@@ -35,7 +35,7 @@ describe('index.ts', () => {
 	const defaultSource = 'test.versatiles';
 	const defaultResults: Partial<ServerOptions> = {
 		compress: false,
-		host: '0.0.0.0',
+		host: '127.0.0.1',
 		port: 8080,
 		tms: false,
 	};

@@ -38,7 +38,7 @@ export class Server {
 		const sprites = urlJoin(options.sprites ?? [{ id: 'basics', url: '/assets/sprites/basics/sprites' }]);
 		const glyphs = urlJoin(options.glyphs ?? 'assets/glyphs/{fontstack}/{range}.pbf');
 		const compress = options.compress ?? false;
-		const host = options.host ?? '0.0.0.0';
+		const host = options.host ?? '127.0.0.1';
 		this.#options = { ...options, port, baseUrl, tilesUrl, sprites, glyphs, compress, host };
 
 		this.#layers = new Map();

@@ -50,8 +50,8 @@ Options:
                            "http://localhost:<port>/")
   -c, --compress           Reduces traffic by recompressing data, but responses
                            take longer. Perfect if behind CDN.
-  -h, --host <hostnameip>  Hostname or IP to bind the server to (default:
-                           "0.0.0.0")
+  -h, --host <hostnameip>  Hostname or IP to bind the server to (use "0.0.0.0"
+                           to listen on all interfaces) (default: "127.0.0.1")
   -o, --open               Open map in web browser
   -p, --port <port>        Port to bind the server to (default: 8080)
   -q, --quiet              be quiet
