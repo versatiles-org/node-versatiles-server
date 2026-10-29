@@ -2,9 +2,10 @@ import { readFileSync } from 'fs';
 import { describe, it, expect, vi, beforeAll, afterEach, afterAll } from 'vitest';
 import { createHash } from 'crypto';
 import { resolve } from 'path';
+import { fileURLToPath } from 'url';
 import type { Server } from './server.js';
 
-const DIRNAME = new URL('../../', import.meta.url).pathname;
+const DIRNAME = fileURLToPath(new URL('../../', import.meta.url));
 
 vi.mock('./log.js', () => ({
 	logDebug: vi.fn(),

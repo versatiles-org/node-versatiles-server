@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import { resolve } from 'path';
 import { describe, it, expect, vi, beforeEach, Mocked } from 'vitest';
 import type { ServerOptions } from './lib/types.js';
 import type { Server } from './lib/server.js';
@@ -94,7 +95,7 @@ describe('index.ts', () => {
 
 	it('starts server with static', async () => {
 		await run(defaultSource + ' -s /folder');
-		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults, static: '/folder' });
+		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults, static: resolve('/folder') });
 	});
 
 	it('starts server with tms', async () => {

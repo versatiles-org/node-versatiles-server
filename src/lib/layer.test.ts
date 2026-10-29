@@ -1,9 +1,10 @@
 import { Layer } from './layer.js';
 import { ServerOptions } from './types.js';
 import { describe, it, expect } from 'vitest';
+import { fileURLToPath } from 'url';
 
 describe('Layer class', () => {
-	const filename = new URL('../../testdata/island.versatiles', import.meta.url).pathname;
+	const filename = fileURLToPath(new URL('../../testdata/island.versatiles', import.meta.url));
 	const baseUrl = 'http://example.org:1234';
 	const serverOptions: ServerOptions = {
 		baseUrl,
