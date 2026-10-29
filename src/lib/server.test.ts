@@ -1,7 +1,9 @@
-import { readFileSync } from 'fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { describe, it, expect, vi, beforeAll, afterEach, afterAll } from 'vitest';
 import { createHash } from 'crypto';
-import { resolve } from 'path';
+import { connect } from 'net';
+import { tmpdir } from 'os';
+import { join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import type { Server } from './server.js';
 
@@ -173,6 +175,52 @@ describe('static files', () => {
 	});
 });
 
+describe('static folder containment', () => {
+	let server: Server;
+	let tempDir: string;
+	const port = 56792;
+
+	beforeAll(async () => {
+		// A real folder layout: the static folder, a hidden file and a sibling folder sharing its name as prefix.
+		tempDir = mkdtempSync(join(tmpdir(), 'versatiles-server-'));
+		mkdirSync(join(tempDir, 'static'));
+		mkdirSync(join(tempDir, 'static-secret'));
+		writeFileSync(join(tempDir, 'static', 'public.txt'), 'public');
+		writeFileSync(join(tempDir, 'static', '.env'), 'SECRET');
+		writeFileSync(join(tempDir, 'static-secret', 'secret.txt'), 'SECRET');
+
+		server = new ServerClass(resolve(DIRNAME, 'testdata/island.versatiles'), {
+			port,
+			static: join(tempDir, 'static'),
+		});
+		await server.start();
+	});
+
+	afterAll(async () => {
+		await server.stop();
+		rmSync(tempDir, { recursive: true, force: true });
+	});
+
+	it('serves files inside the static folder', async () => {
+		expect(await rawGet(port, '/public.txt')).toStrictEqual({ status: 200, body: 'public' });
+	});
+
+	for (const path of [
+		'/../static-secret/secret.txt',
+		'/%2e%2e/static-secret/secret.txt',
+		'/..\\static-secret\\secret.txt',
+		'/..%5Cstatic-secret%5Csecret.txt',
+		'/.env',
+		'/%2Eenv',
+	]) {
+		it(`refuses ${path}`, async () => {
+			const { status, body } = await rawGet(port, path);
+			expect(status).toBe(404);
+			expect(body).not.toContain('SECRET');
+		});
+	}
+});
+
 describe('multiple sources', () => {
 	let server: Server;
 	const port = 56790;
@@ -245,6 +293,24 @@ describe('multiple sources', () => {
 		expect(() => new ServerClass([], { port: port + 1 })).toThrow('source not defined');
 	});
 });
+
+/**
+ * Sends the path verbatim: fetch() would normalize "..", "\\" and percent-encodings before sending.
+ */
+async function rawGet(port: number, path: string): Promise<{ status: number; body: string }> {
+	return new Promise((res, rej) => {
+		const socket = connect(port, '127.0.0.1', () => {
+			socket.write(`GET ${path} HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n`);
+		});
+		const chunks: Buffer[] = [];
+		socket.on('data', (chunk: Buffer) => chunks.push(chunk));
+		socket.on('error', rej);
+		socket.on('end', () => {
+			const [head, ...body] = Buffer.concat(chunks).toString().split('\r\n\r\n');
+			res({ status: parseInt(head.split(' ')[1], 10), body: body.join('\r\n\r\n') });
+		});
+	});
+}
 
 async function getResponseHash(response: Response): Promise<string> {
 	const hasher = createHash('sha256');
