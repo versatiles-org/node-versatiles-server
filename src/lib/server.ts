@@ -15,6 +15,27 @@ export interface SourceSpec {
 	source: Reader | string;
 }
 
+/**
+ * Returns the encodings an Accept-Encoding header allows, honouring "q=0" (refused) and "*" (anything else).
+ */
+export function parseAcceptEncoding(header: string): Set<string> {
+	const accepted = new Set<string>();
+	const refused = new Set<string>();
+	let wildcard = false;
+	for (const entry of header.toLowerCase().split(',')) {
+		const [name, ...params] = entry.split(';').map((part) => part.trim());
+		if (!name) continue;
+		const q = params.find((param) => param.startsWith('q='));
+		const isRefused = q != null && !(parseFloat(q.slice(2)) > 0);
+		if (name === '*') wildcard = !isRefused;
+		else (isRefused ? refused : accepted).add(name);
+	}
+	if (wildcard) {
+		for (const name of ['br', 'gzip']) if (!refused.has(name)) accepted.add(name);
+	}
+	return accepted;
+}
+
 export class Server {
 	readonly #options: ServerOptions;
 
@@ -91,10 +112,10 @@ export class Server {
 					}
 
 					// check request
-					const acceptedEncoding = req.headers['accept-encoding'] ?? '';
+					const acceptedEncodings = parseAcceptEncoding(req.headers['accept-encoding'] ?? '');
 					const responseConfig: ResponseConfig = {
-						acceptBr: acceptedEncoding.includes('br'),
-						acceptGzip: acceptedEncoding.includes('gzip'),
+						acceptBr: acceptedEncodings.has('br'),
+						acceptGzip: acceptedEncodings.has('gzip'),
 						optimalCompression: recompress,
 					};
 

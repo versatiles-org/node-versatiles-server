@@ -12,7 +12,27 @@ vi.mock('./log.js', () => ({
 	logInfo: vi.fn(),
 }));
 const { logImportant } = await import('./log.js');
-const { Server: ServerClass } = await import('./server.js');
+const { Server: ServerClass, parseAcceptEncoding } = await import('./server.js');
+
+describe('parseAcceptEncoding', () => {
+	const parse = (header: string): string[] => [...parseAcceptEncoding(header)].sort();
+
+	it('parses plain lists', () => {
+		expect(parse('gzip, deflate, br')).toStrictEqual(['br', 'deflate', 'gzip']);
+		expect(parse('')).toStrictEqual([]);
+	});
+
+	it('honours q-values', () => {
+		expect(parse('gzip;q=0, br;q=0.5')).toStrictEqual(['br']);
+		expect(parse('gzip; q=0.000, br')).toStrictEqual(['br']);
+	});
+
+	it('handles the wildcard', () => {
+		expect(parse('*')).toStrictEqual(['br', 'gzip']);
+		expect(parse('*, br;q=0')).toStrictEqual(['gzip']);
+		expect(parse('*;q=0, gzip')).toStrictEqual(['gzip']);
+	});
+});
 
 describe('Server', () => {
 	let server: Server;
