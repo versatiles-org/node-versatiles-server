@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.5] - 2026-10-29
+
+### Bug Fixes
+
+- prevent static file access outside the static folder via sibling prefixes or backslashes ([26c64b6](https://github.com/versatiles-org/node-versatiles/commit/26c64b67673e69856ddac7578880187e0d0e9e62))
+- send Vary: Accept-Encoding so caches keep differently encoded responses apart ([e246d5c](https://github.com/versatiles-org/node-versatiles/commit/e246d5c6a6c7b77e6aa9c2d46957a79f236de8a8))
+- disable recompression by default in the Server class to match the CLI and avoid CPU exhaustion ([5fc8ad8](https://github.com/versatiles-org/node-versatiles/commit/5fc8ad8295af67ff3e1103d721a3f8fd8e4f98ed))
+- bind to 127.0.0.1 by default instead of all interfaces ([f17f60e](https://github.com/versatiles-org/node-versatiles/commit/f17f60e8d481b0712e17b810ab594a9ddb99a219))
+- refuse to serve hidden files and folders from static directories ([930d4cc](https://github.com/versatiles-org/node-versatiles/commit/930d4cca01243db31597ef7ea81954deab82cca9))
+- parse Accept-Encoding properly so encodings refused with q=0 are not sent ([5b6be83](https://github.com/versatiles-org/node-versatiles/commit/5b6be83bed99edb97ce481cbfd5b5bf5b2e01fb9))
+- locate bundled static files with fileURLToPath so paths with spaces and Windows paths work ([b1a73e3](https://github.com/versatiles-org/node-versatiles/commit/b1a73e377530d743c2e54543c1eca8b1f92e956e))
+- send X-Content-Type-Options: nosniff on all responses ([5ad289b](https://github.com/versatiles-org/node-versatiles/commit/5ad289b46043be09cf8d926a34935c8fbfc9b386))
+
+### Tests
+
+- build file paths with platform path functions so tests pass on Windows ([be317da](https://github.com/versatiles-org/node-versatiles/commit/be317da054f21c2d147e2eb8d87fdd3cd406b504))
+- expect the vector tile MIME type reported by @versatiles/container 2.1 ([ccfd9b7](https://github.com/versatiles-org/node-versatiles/commit/ccfd9b7e0e243e26a3ed797cdd610b9bc9a028be))
+- cover static folder traversal with real files, raw requests and Windows path semantics ([8b50de3](https://github.com/versatiles-org/node-versatiles/commit/8b50de36c5a1782fd0b67421619cb2beaea74255))
+- add smoke test that installs the packed package into a path with spaces and runs the CLI ([d629e09](https://github.com/versatiles-org/node-versatiles/commit/d629e09b63bb41455b02d845a8637f8d8b9ce0c4))
+- wait for the server to exit before removing the smoke test folder on Windows ([2d13692](https://github.com/versatiles-org/node-versatiles/commit/2d13692c65e04f222111865d22278e935669709c))
+
+### Build System
+
+- replace rm and chmod in build-node with Node calls so it runs on Windows ([7d97b2f](https://github.com/versatiles-org/node-versatiles/commit/7d97b2f961a16c8033d98fbe401ad5f541e8b123))
+
+### CI/CD
+
+- test on Linux, Windows and macOS with Node 22, 24 and 26, plus a smoke test of the packed CLI ([e073f0c](https://github.com/versatiles-org/node-versatiles/commit/e073f0c068ea105832ae20c21a59e0f3957ba4aa))
+
+### Chores
+
+- update dependencies to latest versions ([9f800be](https://github.com/versatiles-org/node-versatiles/commit/9f800bef07f361d8617b5b51e91078a70b97b3fe))
+
 ## [1.7.4] - 2026-10-16
 
 ### Chores
