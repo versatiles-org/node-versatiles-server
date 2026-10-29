@@ -51,7 +51,12 @@ try {
 		await check(`${baseUrl}/tiles/default/8/55/67`, 'application/vnd.mapbox-vector-tile', (body) => body.length > 0);
 		await check(`${baseUrl}/assets/glyphs/index.json`, 'application/json', (body) => body.length > 0);
 	} finally {
-		server.kill();
+		// Windows keeps the folder locked until the process has really exited.
+		if (server.exitCode === null && server.signalCode === null) {
+			const exited = new Promise((res) => server.once('exit', res));
+			server.kill();
+			await exited;
+		}
 	}
 
 	console.log('smoke test passed');
@@ -59,7 +64,7 @@ try {
 	console.error('smoke test failed:', error);
 	exitCode = 1;
 } finally {
-	rmSync(tempDir, { recursive: true, force: true });
+	rmSync(tempDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 });
 }
 
 process.exit(exitCode);
