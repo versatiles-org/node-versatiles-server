@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.6] - 2026-11-03
+
+### Tests
+
+- remove tileSize property from raster sources in style generation tests ([e96c96f](https://github.com/versatiles-org/node-versatiles/commit/e96c96f8bd2ab9d330a29478d485c4e62ec233b9))
+
+### Chores
+
+- update dependencies to latest versions ([b5fdae4](https://github.com/versatiles-org/node-versatiles/commit/b5fdae43e9e5809b1196d6baff6c9d4b3228e927))
+
 ## [1.7.5] - 2026-10-29
 
 ### Bug Fixes
