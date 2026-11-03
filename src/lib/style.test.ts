@@ -26,7 +26,7 @@ describe('generateStyle', () => {
 				{ id: 'background', type: 'background', paint: { 'background-color': '#000' } },
 				{ id: 'raster', source: 'raster', type: 'raster' },
 			],
-			sources: { raster: { tiles: ['http://localhost:8080/tiles/test/{z}/{x}/{y}'], type: 'raster', tileSize: 256 } },
+			sources: { raster: { tiles: ['http://localhost:8080/tiles/test/{z}/{x}/{y}'], type: 'raster' } },
 		});
 	});
 
@@ -38,7 +38,7 @@ describe('generateStyle', () => {
 				{ id: 'background', type: 'background', paint: { 'background-color': '#000' } },
 				{ id: 'raster', source: 'raster', type: 'raster' },
 			],
-			sources: { raster: { tiles: ['http://example.org:2345/tiles/test/{z}/{x}/{y}'], type: 'raster', tileSize: 256 } },
+			sources: { raster: { tiles: ['http://example.org:2345/tiles/test/{z}/{x}/{y}'], type: 'raster' } },
 		});
 	});
 
