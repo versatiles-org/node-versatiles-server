@@ -102,6 +102,12 @@ class 0,2 subgraphs;
 classDef subgraphs fill-opacity:0.1, fill:#888, color:#888, stroke:#888;
 ```
 
+## Sponsors
+
+VersaTiles is free and open source, and its sponsors fund its servers and development. If you or your organisation rely on it, please support it through [GitHub Sponsors](https://github.com/sponsors/versatiles-org) or [Open Collective](https://opencollective.com/versatiles).
+
+[![VersaTiles sponsors](https://versatiles.org/sponsors/sponsors.png)](https://versatiles.org/sponsors/)
+
 ## License
 
 [Unlicense](./LICENSE.md)
