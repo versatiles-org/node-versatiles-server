@@ -66,8 +66,8 @@
   ],
   "dependencies": {
     "@versatiles/container": "^2.1.1",
-    "@versatiles/style": "^8.1.1",
-    "commander": "^15.0.0",
+    "@versatiles/style": "^9.1.0",
+    "commander": "^15.1.0",
     "open": "^11.0.4"
   },
   "devDependencies": {
@@ -79,7 +79,7 @@
     "prettier": "^3.9.10",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.72.1",
+    "typescript-eslint": "^8.72.2",
     "vitest": "^5.1.0"
   },
   "allowScripts": {
