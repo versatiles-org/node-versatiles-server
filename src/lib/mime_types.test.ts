@@ -15,14 +15,18 @@ describe('MIME Type Tests', () => {
 			expect(getMimeByFilename('data.geojson')).toBe('application/geo+json; charset=utf-8');
 			expect(getMimeByFilename('index.htm')).toBe('text/html; charset=utf-8');
 			expect(getMimeByFilename('index.html')).toBe('text/html; charset=utf-8');
+			expect(getMimeByFilename('favicon.ico')).toBe('image/x-icon');
 			expect(getMimeByFilename('image.jpeg')).toBe('image/jpeg');
 			expect(getMimeByFilename('image.jpg')).toBe('image/jpeg');
 			expect(getMimeByFilename('script.js')).toBe('text/javascript; charset=utf-8');
 			expect(getMimeByFilename('data.json')).toBe('application/json; charset=utf-8');
+			expect(getMimeByFilename('script.js.map')).toBe('application/json; charset=utf-8');
+			expect(getMimeByFilename('worker.mjs')).toBe('text/javascript; charset=utf-8');
 			expect(getMimeByFilename('data.pbf')).toBe('application/x-protobuf');
 			expect(getMimeByFilename('image.png')).toBe('image/png');
 			expect(getMimeByFilename('image.svg')).toBe('image/svg+xml; charset=utf-8');
 			expect(getMimeByFilename('data.topojson')).toBe('application/topo+json; charset=utf-8');
+			expect(getMimeByFilename('robots.txt')).toBe('text/plain; charset=utf-8');
 			expect(getMimeByFilename('image.webp')).toBe('image/webp');
 		});
 

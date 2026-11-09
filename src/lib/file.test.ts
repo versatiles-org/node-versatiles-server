@@ -72,7 +72,7 @@ describe('getFileContent', () => {
 		expect(result).toStrictEqual({
 			buffer: `readFile(${path('test/file.txt')})`,
 			compression: 'raw',
-			mime: 'application/octet-stream',
+			mime: 'text/plain; charset=utf-8',
 		});
 	});
 

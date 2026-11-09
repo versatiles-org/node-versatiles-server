@@ -7,14 +7,18 @@ const MIMETYPES = new Map([
 	['geojson', 'application/geo+json; charset=utf-8'],
 	['htm', 'text/html; charset=utf-8'],
 	['html', 'text/html; charset=utf-8'],
+	['ico', 'image/x-icon'],
 	['jpeg', 'image/jpeg'],
 	['jpg', 'image/jpeg'],
 	['js', 'text/javascript; charset=utf-8'],
 	['json', 'application/json; charset=utf-8'],
+	['map', 'application/json; charset=utf-8'],
+	['mjs', 'text/javascript; charset=utf-8'],
 	['pbf', 'application/x-protobuf'],
 	['png', 'image/png'],
 	['svg', 'image/svg+xml; charset=utf-8'],
 	['topojson', 'application/topo+json; charset=utf-8'],
+	['txt', 'text/plain; charset=utf-8'],
 	['webp', 'image/webp'],
 ]);
 
