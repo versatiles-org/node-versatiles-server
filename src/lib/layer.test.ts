@@ -66,5 +66,13 @@ describe('Layer class', () => {
 			expect(tileJSON.tiles).toStrictEqual(['/tiles/test/{z}/{x}/{y}']);
 			expect(tileJSON.vector_layers?.length).toBe(26);
 		});
+
+		it('should take the zoom range and bounds from the header', async () => {
+			const layer = new Layer(filename, serverOptions);
+			const tileJSON = JSON.parse(await layer.getTileJSON('/tiles/test/{z}/{x}/{y}'));
+			expect(tileJSON.minzoom).toBe(8);
+			expect(tileJSON.maxzoom).toBe(14);
+			expect(tileJSON.bounds).toStrictEqual([-97.8662109, 62.6034531, -97.7124023, 62.6842281]);
+		});
 	});
 });

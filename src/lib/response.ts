@@ -77,6 +77,14 @@ export class Response {
 	}
 
 	/**
+	 * Sends an empty response (204), e.g. for a tile that has no content.
+	 */
+	public sendEmpty(): void {
+		this.#response.statusCode = 204;
+		this.#response.end();
+	}
+
+	/**
 	 * Sends a plain-text error message that the caller has explicitly chosen.
 	 * Never pass a caught exception here - use {@link sendInternalError} instead,
 	 * so that no exception details (message, stack trace) can reach the client.

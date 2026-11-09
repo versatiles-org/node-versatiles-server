@@ -40,6 +40,18 @@ export class Layer {
 		};
 	}
 
+	/**
+	 * Whether a tile the container lacks at zoom level `z` is an empty tile rather
+	 * than a missing one. As in the Rust server, that is a vector tile within the
+	 * container's zoom range: a client draws nothing there instead of reporting an error.
+	 */
+	public async isEmptyTile(z: number): Promise<boolean> {
+		await this.init();
+		if (!this.#header) return false;
+		const { tileFormat, zoomMin, zoomMax } = this.#header;
+		return (tileFormat === 'mvt' || tileFormat === 'mlt') && z >= zoomMin && z <= zoomMax;
+	}
+
 	public async getStyle(): Promise<string> {
 		await this.init();
 		if (!this.#metadata) throw Error();
@@ -53,7 +65,9 @@ export class Layer {
 
 	/**
 	 * The container's metadata as TileJSON, with `tiles` set to the given tile URL
-	 * so that clients know where to load the tiles from.
+	 * so that clients know where to load the tiles from. As in the Rust server, the
+	 * zoom range comes from the container header, and so do the bounds if the
+	 * metadata has none, so that clients only ask for tiles the container can have.
 	 */
 	public async getTileJSON(tilesUrl: string): Promise<string> {
 		await this.init();
@@ -61,6 +75,14 @@ export class Layer {
 		if (typeof metadata !== 'object' || metadata === null || Array.isArray(metadata)) {
 			throw Error('metadata is not a JSON object');
 		}
-		return JSON.stringify({ ...metadata, tiles: [tilesUrl] });
+		if (!this.#header) throw Error('header not loaded');
+		const { zoomMin, zoomMax, bbox } = this.#header;
+		return JSON.stringify({
+			...metadata,
+			bounds: 'bounds' in metadata ? metadata.bounds : bbox,
+			minzoom: zoomMin,
+			maxzoom: zoomMax,
+			tiles: [tilesUrl],
+		});
 	}
 }

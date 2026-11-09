@@ -151,8 +151,14 @@ export class Server {
 					if (match) {
 						const [, id, z, x, y] = match;
 						const coords: [number, number, number] = [parseInt(z, 10), parseInt(x, 10), parseInt(y, 10)];
+						const layer = this.#layers.get(this.#layerId(id));
 						const getTile = getTiles.get(this.#layerId(id));
 						const tileResponse = getTile ? await getTile(...coords) : null;
+						if (!tileResponse && (await layer?.isEmptyTile(coords[0]))) {
+							logInfo('send empty tile: ' + coords.join('/'));
+							response.sendEmpty();
+							return;
+						}
 						if (!tileResponse) {
 							logImportant('Error 404: tile not found: ' + path);
 							response.sendError('tile not found: ' + path, 404);

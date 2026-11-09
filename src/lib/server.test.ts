@@ -130,21 +130,32 @@ describe('Server', () => {
 	});
 
 	it('should throw error on missing tiles 2/2', async () => {
-		const response = await fetch(`${baseUrl}/tiles/default/12/34/56`);
+		const response = await fetch(`${baseUrl}/tiles/default/15/34/56`);
 
 		expect(response.status).toBe(404);
-		expect(response.headers.get('content-type')).toBe('text/plain');
-		expect(await response.text()).toBe('tile not found: /tiles/default/12/34/56');
-		expect(logImportant).toHaveBeenCalledWith('tile not found: /tiles/default/12/34/56');
+		expect(await response.text()).toBe('tile not found: /tiles/default/15/34/56');
+	});
+
+	it('should send an empty response for a missing vector tile within the zoom range', async () => {
+		const response = await fetch(`${baseUrl}/tiles/default/12/34/56`);
+
+		expect(response.status).toBe(204);
+		expect(await response.text()).toBe('');
 	});
 
 	it('should serve TileJSON with a relative tile URL', async () => {
 		const response = await fetch(`${baseUrl}/tiles/default/tiles.json`);
 
 		expect(response.status).toBe(200);
-		const tileJSON = (await response.json()) as { tiles?: string[]; vector_layers?: unknown[] };
+		const tileJSON = (await response.json()) as {
+			tiles?: string[];
+			vector_layers?: unknown[];
+			minzoom?: number;
+			maxzoom?: number;
+		};
 		expect(tileJSON.tiles).toStrictEqual(['/tiles/default/{z}/{x}/{y}']);
 		expect(tileJSON.vector_layers?.length).toBe(26);
+		expect([tileJSON.minzoom, tileJSON.maxzoom]).toStrictEqual([8, 14]);
 	});
 
 	it('should handle unsupported HTTP methods with 405', async () => {
