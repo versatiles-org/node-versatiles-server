@@ -150,4 +150,10 @@ describe('sourceToId', () => {
 		expect(sourceToId('./data/satellite.versatiles')).toBe('satellite');
 		expect(sourceToId('elevation.versatiles')).toBe('elevation');
 	});
+
+	it('derives a layer id from a Windows file path', async () => {
+		const { sourceToId } = await import('./index.js');
+		expect(sourceToId('D:\\a\\testdata\\island.versatiles')).toBe('island');
+		expect(sourceToId('..\\data\\osm.versatiles')).toBe('osm');
+	});
 });

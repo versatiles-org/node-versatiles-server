@@ -10,12 +10,13 @@ import { logImportant, setLogLevel } from './lib/log.js';
 
 /**
  * Derives the layer id a source is served under from its URL or filename,
- * e.g. "https://…/osm.versatiles" or "./data/osm.versatiles" → "osm".
+ * e.g. "https://…/osm.versatiles", "./data/osm.versatiles" or "C:\data\osm.versatiles" → "osm".
  */
 export function sourceToId(source: string): string {
+	// Splits on "\" too, the separator of Windows paths.
 	// Trailing slashes are dropped by popping empty segments instead of with a
 	// `/\/+$/` regex, which backtracks quadratically on slash-heavy input.
-	const segments = source.split(/[?#]/)[0].split('/');
+	const segments = source.split(/[?#]/)[0].split(/[\\/]/);
 	while (segments.length > 1 && segments[segments.length - 1] === '') segments.pop();
 	const base = segments[segments.length - 1];
 	return base.replace(/\.versatiles$/i, '') || base;
