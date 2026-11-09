@@ -289,11 +289,11 @@ describe('multiple sources', () => {
 				{ id: 'osm', source: island },
 				{ id: 'satellite', source: island },
 			],
-			{ port: port + 2, baseUrl: 'https://tiles.example.org/' },
+			{ port: port + 3, baseUrl: 'https://tiles.example.org/' },
 		);
 		await external.start();
 		try {
-			const response = await fetch(`http://localhost:${port + 2}/tiles/osm/tiles.json`);
+			const response = await fetch(`http://localhost:${port + 3}/tiles/osm/tiles.json`);
 			const tileJSON = (await response.json()) as { tiles?: string[] };
 			expect(tileJSON.tiles).toStrictEqual(['https://tiles.example.org/tiles/osm/{z}/{x}/{y}']);
 		} finally {
@@ -322,6 +322,50 @@ describe('multiple sources', () => {
 
 	it('rejects an empty source list', () => {
 		expect(() => new ServerClass([], { port: port + 1 })).toThrow('source not defined');
+	});
+
+	it('serves no "default" alias for several sources', async () => {
+		const response = await fetch(`${baseUrl}/tiles/default/8/55/67`);
+		expect(response.status).toBe(404);
+	});
+});
+
+describe('single named source', () => {
+	let server: Server;
+	const port = 56794;
+	const baseUrl = `http://localhost:${port}`;
+
+	beforeAll(async () => {
+		server = new ServerClass([{ id: 'osm', source: resolve(DIRNAME, 'testdata/island.versatiles') }], { port });
+		await server.start();
+	});
+
+	afterAll(async () => {
+		await server.stop();
+	});
+
+	it('lists only its own name in the index', async () => {
+		const response = await fetch(`${baseUrl}/tiles/index.json`);
+		expect(await response.json()).toEqual(['osm']);
+	});
+
+	it('points its style at its own tile endpoint', async () => {
+		const response = await fetch(`${baseUrl}/tiles/osm/style.json`);
+		const style = (await response.json()) as { sources: Record<string, { tiles?: string[] }> };
+		expect(Object.values(style.sources)[0].tiles).toEqual([`${baseUrl}/tiles/osm/{z}/{x}/{y}`]);
+	});
+
+	it('serves tiles, TileJSON and style under "default" too', async () => {
+		for (const id of ['osm', 'default']) {
+			const tile = await fetch(`${baseUrl}/tiles/${id}/8/55/67`);
+			expect(tile.status).toBe(200);
+
+			const tileJSON = (await (await fetch(`${baseUrl}/tiles/${id}/tiles.json`)).json()) as { tiles?: string[] };
+			expect(tileJSON.tiles).toStrictEqual(['/tiles/osm/{z}/{x}/{y}']);
+
+			const style = await fetch(`${baseUrl}/tiles/${id}/style.json`);
+			expect(style.status).toBe(200);
+		}
 	});
 });
 

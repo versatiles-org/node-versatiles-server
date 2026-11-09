@@ -42,7 +42,7 @@
 				const layers = await (await fetch('tiles/index.json')).json();
 				if (!layers.length) throw new Error('no tile layers available');
 
-				// Prefer the "default" layer (single-source mode), otherwise the first one.
+				// Prefer a layer named "default", otherwise the first one.
 				let current = layers.includes('default') ? 'default' : layers[0];
 
 				async function loadStyle(id) {

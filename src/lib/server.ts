@@ -38,18 +38,22 @@ export function parseAcceptEncoding(header: string): Set<string> {
 }
 
 export class Server {
-	readonly #options: ServerOptions;
+	readonly #options: Omit<ServerOptions, 'tilesUrl'>;
 
 	readonly #layers: Map<string, Layer>;
 
 	/** The tile URL each layer's TileJSON names in its `tiles` field. */
 	readonly #tileJsonUrls: Map<string, string>;
 
+	/** The id of the lone layer that "/tiles/default/…" also serves, if it isn't named "default". */
+	readonly #defaultAlias?: string;
+
 	#server?: httpServer;
 
 	/**
 	 * @param sources A single source (served as layer "default") or a list of
-	 *   `{ id, source }` specs, each served under `/tiles/<id>/…`.
+	 *   `{ id, source }` specs, each served under `/tiles/<id>/…`. A lone layer is
+	 *   also served under `/tiles/default/…`, so that older setups keep working.
 	 */
 	public constructor(sources: Reader | string | SourceSpec[], options: Partial<ServerOptions>) {
 		if (sources == null) throw Error('source not defined');
@@ -59,28 +63,32 @@ export class Server {
 
 		const port = options.port ?? 8080;
 		const baseUrl = options.baseUrl ?? `http://localhost:${port}/`;
-		const tilesUrl = urlJoin(options.tilesUrl ?? '/tiles/default/{z}/{x}/{y}');
 		const sprites = urlJoin(options.sprites ?? [{ id: 'basics', url: '/assets/sprites/basics/sprites' }]);
 		const glyphs = urlJoin(options.glyphs ?? 'assets/glyphs/{fontstack}/{range}.pbf');
 		const compress = options.compress ?? false;
 		const host = options.host ?? '127.0.0.1';
-		this.#options = { ...options, port, baseUrl, tilesUrl, sprites, glyphs, compress, host };
+		this.#options = { ...options, port, baseUrl, sprites, glyphs, compress, host };
+
+		// An explicit tilesUrl only applies to a lone layer.
+		const explicitTilesUrl = specs.length === 1 && options.tilesUrl != null ? urlJoin(options.tilesUrl) : undefined;
 
 		// TileJSON names the tile URL relative to the server, as the Rust server does, so
 		// it works under any host name. Only an explicit base or tiles URL makes it absolute.
-		const absoluteTileJson = options.baseUrl != null || (specs.length === 1 && options.tilesUrl != null);
+		const absoluteTileJson = options.baseUrl != null || explicitTilesUrl != null;
 
 		this.#layers = new Map();
 		this.#tileJsonUrls = new Map();
 		for (const { id, source } of specs) {
 			if (source == null) throw Error('source not defined');
 			if (this.#layers.has(id)) throw Error(`duplicate source id: "${id}"`);
-			// Each layer points its style at its own tile endpoint. A lone source keeps
-			// the historical "/tiles/default/…" url (and honours an explicit tilesUrl).
-			const layerTilesUrl = specs.length === 1 ? this.#options.tilesUrl : urlJoin(`/tiles/${id}/{z}/{x}/{y}`);
+			// Each layer points its style at its own tile endpoint.
+			const layerTilesUrl = explicitTilesUrl ?? urlJoin(`/tiles/${id}/{z}/{x}/{y}`);
 			this.#layers.set(id, new Layer(source, { ...this.#options, tilesUrl: layerTilesUrl }));
 			this.#tileJsonUrls.set(id, absoluteTileJson ? layerTilesUrl : `/tiles/${id}/{z}/{x}/{y}`);
 		}
+
+		// Older setups load a lone source from "/tiles/default/…".
+		if (specs.length === 1 && specs[0].id !== 'default') this.#defaultAlias = specs[0].id;
 
 		function urlJoin<T extends string | { id: string; url: string }[]>(url: T): T {
 			if (typeof url === 'string') {
@@ -91,6 +99,11 @@ export class Server {
 			}
 			throw Error('invalid url');
 		}
+	}
+
+	/** The id of the layer a request names, resolving the "default" alias. */
+	#layerId(id: string): string {
+		return id === 'default' && this.#defaultAlias != null ? this.#defaultAlias : id;
 	}
 
 	public getUrl(): string {
@@ -138,7 +151,7 @@ export class Server {
 					if (match) {
 						const [, id, z, x, y] = match;
 						const coords: [number, number, number] = [parseInt(z, 10), parseInt(x, 10), parseInt(y, 10)];
-						const getTile = getTiles.get(id);
+						const getTile = getTiles.get(this.#layerId(id));
 						const tileResponse = getTile ? await getTile(...coords) : null;
 						if (!tileResponse) {
 							logImportant('Error 404: tile not found: ' + path);
@@ -157,8 +170,9 @@ export class Server {
 					// per-layer TileJSON: /tiles/<id>/tiles.json
 					const metaMatch = /^\/tiles\/([^/]+)\/tiles\.json$/.exec(path);
 					if (metaMatch) {
-						const layer = this.#layers.get(metaMatch[1]);
-						const tilesUrl = this.#tileJsonUrls.get(metaMatch[1]);
+						const id = this.#layerId(metaMatch[1]);
+						const layer = this.#layers.get(id);
+						const tilesUrl = this.#tileJsonUrls.get(id);
 						if (layer && tilesUrl != null) {
 							return await response.sendJSONString(await layer.getTileJSON(tilesUrl), responseConfig);
 						}
@@ -167,7 +181,7 @@ export class Server {
 					// per-layer style: /tiles/<id>/style.json
 					const styleMatch = /^\/tiles\/([^/]+)\/style\.json$/.exec(path);
 					if (styleMatch) {
-						const layer = this.#layers.get(styleMatch[1]);
+						const layer = this.#layers.get(this.#layerId(styleMatch[1]));
 						if (layer) {
 							return await response.sendJSONString(await layer.getStyle(), responseConfig);
 						}

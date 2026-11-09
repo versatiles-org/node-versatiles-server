@@ -40,10 +40,10 @@ Simple VersaTiles server
 
 Arguments:
   sources                  One or more VersaTiles containers (URL or
-                           "*.versatiles" file). A single source is served as
-                           layer "default"; multiple sources are each served
-                           under a layer named after their filename (e.g.
-                           "osm.versatiles" → /tiles/osm/…).
+                           "*.versatiles" file). Each source is served under a
+                           layer named after its filename (e.g. "osm.versatiles"
+                           → /tiles/osm/…). A single source is also served as
+                           /tiles/default/….
 
 Options:
   -b, --base-url <url>     Base URL for the server (default:

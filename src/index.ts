@@ -48,8 +48,8 @@ program
 	.argument(
 		'<sources...>',
 		'One or more VersaTiles containers (URL or "*.versatiles" file). ' +
-			'A single source is served as layer "default"; multiple sources are each served ' +
-			'under a layer named after their filename (e.g. "osm.versatiles" → /tiles/osm/…).',
+			'Each source is served under a layer named after its filename ' +
+			'(e.g. "osm.versatiles" → /tiles/osm/…). A single source is also served as /tiles/default/….',
 	)
 	.action(async (sources: string[], cmdOptions: Record<string, unknown>) => {
 		const srvOptions: Partial<ServerOptions> = {
@@ -65,10 +65,8 @@ program
 
 		if (!sources || sources.length === 0) throw Error('source not defined');
 
-		// A single source keeps the historical behaviour (served as layer "default");
-		// multiple sources become named layers derived from their filenames.
-		const serverSource: string | SourceSpec[] =
-			sources.length === 1 ? sources[0] : sources.map((source) => ({ id: sourceToId(source), source }));
+		// Every source becomes a layer named after its filename.
+		const serverSource: SourceSpec[] = sources.map((source) => ({ id: sourceToId(source), source }));
 
 		try {
 			const server = new Server(serverSource, srvOptions);

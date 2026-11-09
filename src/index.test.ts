@@ -34,6 +34,7 @@ const { setLogLevel } = await import('./lib/log.js');
 
 describe('index.ts', () => {
 	const defaultSource = 'test.versatiles';
+	const defaultSpecs = [{ id: 'test', source: defaultSource }];
 	const defaultResults: Partial<ServerOptions> = {
 		compress: false,
 		host: '127.0.0.1',
@@ -49,10 +50,10 @@ describe('index.ts', () => {
 		await expect(async () => run('')).rejects.toThrow('source not defined');
 	});
 
-	it('starts server with source', async () => {
+	it('starts server with a single source named after its file', async () => {
 		await run(defaultSource);
 		expect(open).toHaveBeenCalledTimes(0);
-		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults });
+		expect(mockedServer).toHaveBeenCalledWith(defaultSpecs, { ...defaultResults });
 	});
 
 	it('starts server with multiple sources as named layers', async () => {
@@ -68,39 +69,39 @@ describe('index.ts', () => {
 
 	it('starts server with baseurl', async () => {
 		await run(defaultSource + ' -b https://example.org');
-		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults, baseUrl: 'https://example.org' });
+		expect(mockedServer).toHaveBeenCalledWith(defaultSpecs, { ...defaultResults, baseUrl: 'https://example.org' });
 	});
 
 	it('starts server with compress', async () => {
 		await run(defaultSource + ' -c');
-		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults, compress: true });
+		expect(mockedServer).toHaveBeenCalledWith(defaultSpecs, { ...defaultResults, compress: true });
 	});
 
 	it('starts server with host', async () => {
 		await run(defaultSource + ' -h 9.0.0.0');
-		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults, host: '9.0.0.0' });
+		expect(mockedServer).toHaveBeenCalledWith(defaultSpecs, { ...defaultResults, host: '9.0.0.0' });
 	});
 
 	it('starts server with port', async () => {
 		await run(defaultSource + ' -p 12345');
-		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults, port: 12345 });
+		expect(mockedServer).toHaveBeenCalledWith(defaultSpecs, { ...defaultResults, port: 12345 });
 	});
 
 	it('starts server with open', async () => {
 		await run(defaultSource + ' -o');
-		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults });
+		expect(mockedServer).toHaveBeenCalledWith(defaultSpecs, { ...defaultResults });
 		expect(open).toHaveBeenCalledTimes(1);
 		expect(open).toHaveBeenCalledWith('https:/dingdong');
 	});
 
 	it('starts server with static', async () => {
 		await run(defaultSource + ' -s /folder');
-		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults, static: resolve('/folder') });
+		expect(mockedServer).toHaveBeenCalledWith(defaultSpecs, { ...defaultResults, static: resolve('/folder') });
 	});
 
 	it('starts server with tms', async () => {
 		await run(defaultSource + ' -t');
-		expect(mockedServer).toHaveBeenCalledWith(defaultSource, { ...defaultResults, tms: true });
+		expect(mockedServer).toHaveBeenCalledWith(defaultSpecs, { ...defaultResults, tms: true });
 	});
 
 	it('starts server with quiet logging 1/2', async () => {
