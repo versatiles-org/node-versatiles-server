@@ -138,6 +138,15 @@ describe('Server', () => {
 		expect(logImportant).toHaveBeenCalledWith('tile not found: /tiles/default/12/34/56');
 	});
 
+	it('should serve TileJSON with a relative tile URL', async () => {
+		const response = await fetch(`${baseUrl}/tiles/default/tiles.json`);
+
+		expect(response.status).toBe(200);
+		const tileJSON = (await response.json()) as { tiles?: string[]; vector_layers?: unknown[] };
+		expect(tileJSON.tiles).toStrictEqual(['/tiles/default/{z}/{x}/{y}']);
+		expect(tileJSON.vector_layers?.length).toBe(26);
+	});
+
 	it('should handle unsupported HTTP methods with 405', async () => {
 		const response = await fetch(`${baseUrl}/index.html`, { method: 'POST' });
 
@@ -264,10 +273,32 @@ describe('multiple sources', () => {
 		expect(tiles).toEqual([`${baseUrl}/tiles/satellite/{z}/{x}/{y}`]);
 	});
 
-	it('serves per-layer metadata', async () => {
-		const response = await fetch(`${baseUrl}/tiles/osm/tiles.json`);
-		expect(response.status).toBe(200);
-		expect(response.headers.get('content-type')).toContain('application/json');
+	it('serves per-layer TileJSON pointing at its own tiles', async () => {
+		for (const id of ['osm', 'satellite']) {
+			const response = await fetch(`${baseUrl}/tiles/${id}/tiles.json`);
+			expect(response.status).toBe(200);
+			expect(response.headers.get('content-type')).toContain('application/json');
+			const tileJSON = (await response.json()) as { tiles?: string[] };
+			expect(tileJSON.tiles).toStrictEqual([`/tiles/${id}/{z}/{x}/{y}`]);
+		}
+	});
+
+	it('uses absolute tile URLs in TileJSON when a base URL is given', async () => {
+		const external = new ServerClass(
+			[
+				{ id: 'osm', source: island },
+				{ id: 'satellite', source: island },
+			],
+			{ port: port + 2, baseUrl: 'https://tiles.example.org/' },
+		);
+		await external.start();
+		try {
+			const response = await fetch(`http://localhost:${port + 2}/tiles/osm/tiles.json`);
+			const tileJSON = (await response.json()) as { tiles?: string[] };
+			expect(tileJSON.tiles).toStrictEqual(['https://tiles.example.org/tiles/osm/{z}/{x}/{y}']);
+		} finally {
+			await external.stop();
+		}
 	});
 
 	it('responds with 404 for an unknown layer', async () => {

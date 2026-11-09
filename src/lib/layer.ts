@@ -50,4 +50,17 @@ export class Layer {
 		await this.init();
 		return this.#metadata;
 	}
+
+	/**
+	 * The container's metadata as TileJSON, with `tiles` set to the given tile URL
+	 * so that clients know where to load the tiles from.
+	 */
+	public async getTileJSON(tilesUrl: string): Promise<string> {
+		await this.init();
+		const metadata: unknown = JSON.parse(this.#metadata ?? '{}');
+		if (typeof metadata !== 'object' || metadata === null || Array.isArray(metadata)) {
+			throw Error('metadata is not a JSON object');
+		}
+		return JSON.stringify({ ...metadata, tiles: [tilesUrl] });
+	}
 }

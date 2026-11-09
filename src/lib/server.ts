@@ -42,6 +42,9 @@ export class Server {
 
 	readonly #layers: Map<string, Layer>;
 
+	/** The tile URL each layer's TileJSON names in its `tiles` field. */
+	readonly #tileJsonUrls: Map<string, string>;
+
 	#server?: httpServer;
 
 	/**
@@ -63,7 +66,12 @@ export class Server {
 		const host = options.host ?? '127.0.0.1';
 		this.#options = { ...options, port, baseUrl, tilesUrl, sprites, glyphs, compress, host };
 
+		// TileJSON names the tile URL relative to the server, as the Rust server does, so
+		// it works under any host name. Only an explicit base or tiles URL makes it absolute.
+		const absoluteTileJson = options.baseUrl != null || (specs.length === 1 && options.tilesUrl != null);
+
 		this.#layers = new Map();
+		this.#tileJsonUrls = new Map();
 		for (const { id, source } of specs) {
 			if (source == null) throw Error('source not defined');
 			if (this.#layers.has(id)) throw Error(`duplicate source id: "${id}"`);
@@ -71,6 +79,7 @@ export class Server {
 			// the historical "/tiles/default/…" url (and honours an explicit tilesUrl).
 			const layerTilesUrl = specs.length === 1 ? this.#options.tilesUrl : urlJoin(`/tiles/${id}/{z}/{x}/{y}`);
 			this.#layers.set(id, new Layer(source, { ...this.#options, tilesUrl: layerTilesUrl }));
+			this.#tileJsonUrls.set(id, absoluteTileJson ? layerTilesUrl : `/tiles/${id}/{z}/{x}/{y}`);
 		}
 
 		function urlJoin<T extends string | { id: string; url: string }[]>(url: T): T {
@@ -145,12 +154,13 @@ export class Server {
 						return await response.sendJSONString(JSON.stringify([...this.#layers.keys()]), responseConfig);
 					}
 
-					// per-layer metadata: /tiles/<id>/tiles.json
+					// per-layer TileJSON: /tiles/<id>/tiles.json
 					const metaMatch = /^\/tiles\/([^/]+)\/tiles\.json$/.exec(path);
 					if (metaMatch) {
 						const layer = this.#layers.get(metaMatch[1]);
-						if (layer) {
-							return await response.sendJSONString((await layer.getMetadata()) ?? '', responseConfig);
+						const tilesUrl = this.#tileJsonUrls.get(metaMatch[1]);
+						if (layer && tilesUrl != null) {
+							return await response.sendJSONString(await layer.getTileJSON(tilesUrl), responseConfig);
 						}
 					}
 

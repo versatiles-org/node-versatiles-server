@@ -58,4 +58,13 @@ describe('Layer class', () => {
 			expect(metadata?.vector_layers?.length).toBe(26);
 		});
 	});
+
+	describe('getTileJSON', () => {
+		it('should add the tile URL to the metadata', async () => {
+			const layer = new Layer(filename, serverOptions);
+			const tileJSON = JSON.parse(await layer.getTileJSON('/tiles/test/{z}/{x}/{y}'));
+			expect(tileJSON.tiles).toStrictEqual(['/tiles/test/{z}/{x}/{y}']);
+			expect(tileJSON.vector_layers?.length).toBe(26);
+		});
+	});
 });
