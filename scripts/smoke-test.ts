@@ -46,8 +46,11 @@ try {
 
 		const baseUrl = `http://127.0.0.1:${port}`;
 		await check(`${baseUrl}/`, 'text/html', (body) => body.includes('<html'));
-		await check(`${baseUrl}/tiles/index.json`, 'application/json', (body) => body === '["default"]');
-		await check(`${baseUrl}/tiles/default/style.json`, 'application/json', (body) => 'sources' in JSON.parse(body));
+		await check(`${baseUrl}/tiles/index.json`, 'application/json', (body) => body === '["island"]');
+		await check(`${baseUrl}/tiles/island/tiles.json`, 'application/json', (body) => 'tiles' in JSON.parse(body));
+		await check(`${baseUrl}/tiles/island/style.json`, 'application/json', (body) => 'sources' in JSON.parse(body));
+		await check(`${baseUrl}/tiles/island/8/55/67`, 'application/vnd.mapbox-vector-tile', (body) => body.length > 0);
+		// A single source is also served under its old name.
 		await check(`${baseUrl}/tiles/default/8/55/67`, 'application/vnd.mapbox-vector-tile', (body) => body.length > 0);
 		await check(`${baseUrl}/assets/glyphs/index.json`, 'application/json', (body) => body.length > 0);
 	} finally {
