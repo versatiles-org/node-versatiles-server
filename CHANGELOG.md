@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-11-09
+
+### Features
+
+- **server:** implement empty tile response for missing vector tiles and update TileJSON with zoom range and bounds ([309bcda](https://github.com/versatiles-org/node-versatiles/commit/309bcda16229edaca9cc7ed5e35027c7f97fc1e8))
+
+### Bug Fixes
+
+- **server:** add the tile URL to TileJSON, closes #47 ([cdcb9ba](https://github.com/versatiles-org/node-versatiles/commit/cdcb9ba1d07598b14df20bba295610fea176503f))
+- **server:** name a single source after its file, closes #48 ([806f81e](https://github.com/versatiles-org/node-versatiles/commit/806f81eb9c6c2fae888e358a93a394a739a461b1))
+- **server:** serve .mjs, .map, .txt and .ico with their MIME types ([12c207e](https://github.com/versatiles-org/node-versatiles/commit/12c207e7c13b923037d565bccf446574128413ca))
+- **server:** name a source after its file on Windows too ([66e980c](https://github.com/versatiles-org/node-versatiles/commit/66e980c48fa619bb47782876f97736219a8da84f))
+
+### Documentation
+
+- add sponsors section to README ([bfd5b1e](https://github.com/versatiles-org/node-versatiles/commit/bfd5b1eb8f740ad1635a7a60bd595406f895ada9))
+- add funding section to package.json ([5807339](https://github.com/versatiles-org/node-versatiles/commit/58073391029abe1e616094c84e1953ac64109047))
+
+### Tests
+
+- expect the file-named layer in the smoke test ([eb013b3](https://github.com/versatiles-org/node-versatiles/commit/eb013b38297836ee61dcbbca9a6bb1d6f7b30728))
+
+### Chores
+
+- update dependencies to latest versions ([ee1fb72](https://github.com/versatiles-org/node-versatiles/commit/ee1fb72b18389018dd094ddaa93a03ab9ebca1de))
+- use the renamed tilesets in the dev script, closes #46 ([660e6e7](https://github.com/versatiles-org/node-versatiles/commit/660e6e70f546ae1324d9426e7b73c937e9216c1a))
+- override minimatch to fix the npm audit failure ([ab9c992](https://github.com/versatiles-org/node-versatiles/commit/ab9c992a9ca3cfea8dd8b9eca88c3f664a0f5494))
+
 ## [1.7.6] - 2026-11-03
 
 ### Tests

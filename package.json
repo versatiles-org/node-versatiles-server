@@ -1,6 +1,6 @@
 {
   "name": "@versatiles/server",
-  "version": "1.7.6",
+  "version": "1.8.0",
   "description": "A server for VersaTiles",
   "bin": {
     "versatiles-server": "./dist/index.js"
@@ -40,8 +40,14 @@
   "author": "yetzt <node@yetzt.me>, Michael Kreil <versatiles@michael-kreil.de>",
   "license": "Unlicense",
   "funding": [
-    { "type": "github", "url": "https://github.com/sponsors/versatiles-org" },
-    { "type": "opencollective", "url": "https://opencollective.com/versatiles" }
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/versatiles-org"
+    },
+    {
+      "type": "opencollective",
+      "url": "https://opencollective.com/versatiles"
+    }
   ],
   "engines": {
     "node": ">= 18"
