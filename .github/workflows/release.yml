@@ -1,0 +1,52 @@
+name: Release
+
+# Started by the tag that `npm run release` (`vrt release`) pushes. The reusable workflow checks
+# that the tag is on main and matches package.json, runs `npm run check` and packs the tarball;
+# the job below publishes exactly that tarball. `vrt release` looks for a workflow named "Release".
+# Setup: https://github.com/versatiles-org/node-release-tool#release-workflow
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    uses: versatiles-org/node-release-tool/.github/workflows/release.yml@v2.22.0
+    permissions:
+      contents: read
+    with:
+      # The oldest Node version that `engines` in package.json allows.
+      node-version: '22'
+
+  # npm only accepts trusted publishing from the workflow file configured on npmjs.com
+  # (this file, release.yml, with the environment "npm"), so this job lives here and not
+  # in the reusable workflow. No npm token is stored anywhere.
+  publish:
+    name: Publish
+    needs: build
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: write # GitHub release
+      id-token: write # npm trusted publishing and provenance
+    steps:
+      - uses: actions/setup-node@v7
+        with:
+          # npm 11.5.1 or newer is needed for trusted publishing
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - uses: actions/download-artifact@v8
+        with:
+          name: release
+          path: release
+      - run: npx --yes "@versatiles/release-tool@${{ needs.build.outputs.tool-version }}" release-publish release --tag "$GITHUB_REF_NAME"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}

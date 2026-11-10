@@ -23,7 +23,7 @@
     "format-check": "prettier --check .",
     "lint": "eslint . --color",
     "prepack": "npm run build",
-    "release": "vrt release-npm",
+    "release": "vrt release",
     "start": "tsx src/index.ts",
     "test-coverage": "vitest --run --coverage",
     "test-smoke": "tsx scripts/smoke-test.ts",
