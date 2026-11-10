@@ -71,7 +71,7 @@
     "versatiles"
   ],
   "dependencies": {
-    "@versatiles/container": "^2.1.1",
+    "@versatiles/container": "^2.1.2",
     "@versatiles/style": "^9.1.0",
     "commander": "^15.1.0",
     "open": "^11.0.4"
@@ -79,7 +79,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^26.6.6",
-    "@versatiles/release-tool": "^2.21.0",
+    "@versatiles/release-tool": "^2.22.0",
     "@vitest/coverage-v8": "^5.1.0",
     "eslint": "^10.14.0",
     "prettier": "^3.9.10",
