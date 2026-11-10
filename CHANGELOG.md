@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.1] - 2026-11-10
+
+### Bug Fixes
+
+- update Node.js engine requirement to >= 22.15 and correct repository URL in package.json ([06d199b](https://github.com/versatiles-org/node-versatiles-server/commit/06d199b9cf5c221f09eec2f8dbbf27ec1adf970c))
+
+### CI/CD
+
+- **release:** publish to npm from a GitHub workflow with trusted publishing, closes #49 ([46730b7](https://github.com/versatiles-org/node-versatiles-server/commit/46730b79b9f3032b7effb123a70e9fe8cdc7d0ca))
+
+### Chores
+
+- update @versatiles/container and @versatiles/release-tool to latest versions ([cc44c77](https://github.com/versatiles-org/node-versatiles-server/commit/cc44c772faca921c5041457d40477ecb8ce8c12d))
+
 ## [1.8.0] - 2026-11-09
 
 ### Features
