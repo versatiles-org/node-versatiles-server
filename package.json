@@ -33,9 +33,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/versatiles-org/node-versatiles.git"
+    "url": "git+https://github.com/versatiles-org/node-versatiles-server.git"
   },
-  "homepage": "https://github.com/versatiles-org/node-versatiles/blob/main/versatiles-server/README.md",
+  "homepage": "https://github.com/versatiles-org/node-versatiles-server#readme",
   "type": "module",
   "author": "yetzt <node@yetzt.me>, Michael Kreil <versatiles@michael-kreil.de>",
   "license": "Unlicense",
@@ -50,7 +50,7 @@
     }
   ],
   "engines": {
-    "node": ">= 18"
+    "node": ">= 22.15"
   },
   "keywords": [
     "cloudtiles",
