@@ -2,7 +2,7 @@
 [![NPM downloads](https://img.shields.io/npm/dt/%40versatiles%2Fserver)](https://www.npmjs.com/package/@versatiles/server)
 [![Code coverage](https://codecov.io/gh/versatiles-org/node-versatiles-server/branch/main/graph/badge.svg?token=IDHAI13M0K)](https://codecov.io/gh/versatiles-org/node-versatiles-server)
 [![CI status](https://img.shields.io/github/actions/workflow/status/versatiles-org/node-versatiles-server/ci.yml)](https://github.com/versatiles-org/node-versatiles-server/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![License](https://img.shields.io/badge/license-Unlicense-green)](LICENSE.md)
 
 # VersaTiles - Server
 
@@ -27,6 +27,21 @@ For example:
 ```bash
 versatiles-server planet.versatiles
 ```
+
+## Endpoints
+
+Each source is served as a layer, named after its filename (`planet.versatiles` → `planet`). A single source is also served under the name `default`.
+
+| Path                         | Content                                                                                                                |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `/`                          | A map viewer with MapLibre GL JS. With several layers, a dropdown switches between them.                               |
+| `/tiles/index.json`          | The names of all layers, as a JSON array                                                                               |
+| `/tiles/<layer>/{z}/{x}/{y}` | The tiles. A missing vector tile inside the zoom range is answered with an empty response (204).                       |
+| `/tiles/<layer>/tiles.json`  | The TileJSON of the layer                                                                                              |
+| `/tiles/<layer>/style.json`  | A MapLibre style for the layer, generated with [@versatiles/style](https://github.com/versatiles-org/versatiles-style) |
+| `/assets/…`                  | The fonts (Noto Sans regular and bold), the `base` sprite and MapLibre GL JS that the viewer and style use             |
+
+Responses are compressed with Brotli or gzip, as the client's `Accept-Encoding` allows. Files in the folder given with `--static` take precedence over the built-in viewer and assets.
 
 ## Options
 
