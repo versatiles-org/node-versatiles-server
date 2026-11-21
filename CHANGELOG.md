@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.2] - 2026-11-21
+
+### Bug Fixes
+
+- **server:** serve the base sprite that @versatiles/style names its icons after ([7fa19cc](https://github.com/versatiles-org/node-versatiles-server/commit/7fa19cc356fbde65a60fe763d34de632e16bd6d7))
+- **scripts:** refresh whole library folders in update-frontend, so MapLibre's worker modules come along ([b85d006](https://github.com/versatiles-org/node-versatiles-server/commit/b85d006912e4c964e7c512c58ca1fa98d5a85949))
+
+### Documentation
+
+- document the endpoints and fix the license badge ([d658d88](https://github.com/versatiles-org/node-versatiles-server/commit/d658d8836ae4bda741e113060f69ddd0b28b226e))
+
+### Chores
+
+- update dependencies ([f348f55](https://github.com/versatiles-org/node-versatiles-server/commit/f348f55ceb42e5d37ce2951a61d9e15dc901e8aa))
+
 ## [1.8.1] - 2026-11-10
 
 ### Bug Fixes
