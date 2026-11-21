@@ -13,7 +13,7 @@ describe('generateStyle', () => {
 		return {
 			baseUrl,
 			glyphs: baseUrl + '/assets/glyphs/{fontstack}/{range}.pbf',
-			sprites: [{ id: 'basics', url: baseUrl + '/assets/sprites/basics/sprites' }],
+			sprites: [{ id: 'base', url: baseUrl + '/assets/sprites/base' }],
 			tilesUrl: baseUrl + '/tiles/test/{z}/{x}/{y}',
 		};
 	}

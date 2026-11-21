@@ -63,7 +63,8 @@ export class Server {
 
 		const port = options.port ?? 8080;
 		const baseUrl = options.baseUrl ?? `http://localhost:${port}/`;
-		const sprites = urlJoin(options.sprites ?? [{ id: 'basics', url: '/assets/sprites/basics/sprites' }]);
+		// @versatiles/style names its icons "base:…", so the sprite has to be served under the id "base".
+		const sprites = urlJoin(options.sprites ?? [{ id: 'base', url: '/assets/sprites/base' }]);
 		const glyphs = urlJoin(options.glyphs ?? 'assets/glyphs/{fontstack}/{range}.pbf');
 		const compress = options.compress ?? false;
 		const host = options.host ?? '127.0.0.1';

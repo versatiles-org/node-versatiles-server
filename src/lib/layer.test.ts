@@ -9,7 +9,7 @@ describe('Layer class', () => {
 	const serverOptions: ServerOptions = {
 		baseUrl,
 		glyphs: baseUrl + '/assets/glyphs/{fontstack}/{range}.pbf',
-		sprites: [{ id: 'basics', url: baseUrl + '/assets/sprites/basics/sprites' }],
+		sprites: [{ id: 'base', url: baseUrl + '/assets/sprites/base' }],
 		tilesUrl: baseUrl + '/tiles/test/{z}/{x}/{y}.pbf',
 	};
 
@@ -46,7 +46,7 @@ describe('Layer class', () => {
 			const style: unknown = JSON.parse(await layer.getStyle());
 			expect(style).toMatchObject({
 				glyphs: 'http://example.org:1234/assets/glyphs/{fontstack}/{range}.pbf',
-				sprite: [{ id: 'basics', url: 'http://example.org:1234/assets/sprites/basics/sprites' }],
+				sprite: [{ id: 'base', url: 'http://example.org:1234/assets/sprites/base' }],
 			});
 		});
 	});

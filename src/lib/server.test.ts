@@ -158,6 +158,48 @@ describe('Server', () => {
 		expect([tileJSON.minzoom, tileJSON.maxzoom]).toStrictEqual([8, 14]);
 	});
 
+	it('should serve every sprite and icon that its style uses', async () => {
+		const style = (await (await fetch(`${baseUrl}/tiles/default/style.json`)).json()) as {
+			sprite?: { id: string; url: string }[];
+			layers: { layout?: unknown; paint?: unknown }[];
+		};
+		const sprites = style.sprite ?? [];
+		expect(sprites.length).toBeGreaterThan(0);
+
+		// Image properties name icons as "<sprite id>:<icon>", also inside expressions.
+		const imageProperties = [
+			'icon-image',
+			'fill-pattern',
+			'line-pattern',
+			'fill-extrusion-pattern',
+			'background-pattern',
+		];
+		const used = new Set<string>();
+		const collect = (value: unknown): void => {
+			if (typeof value === 'string') {
+				if (/^[\w-]+:[\w-]+$/.test(value)) used.add(value);
+			} else if (Array.isArray(value)) value.forEach(collect);
+		};
+		for (const layer of style.layers) {
+			for (const properties of [layer.layout, layer.paint] as (Record<string, unknown> | undefined)[]) {
+				for (const key of imageProperties) collect(properties?.[key]);
+			}
+		}
+		expect(used.size).toBeGreaterThan(0);
+
+		const available = new Set<string>();
+		for (const { id, url } of sprites) {
+			for (const suffix of ['.json', '@2x.json', '.png', '@2x.png']) {
+				const response = await fetch(url + suffix);
+				expect(response.status, url + suffix).toBe(200);
+				if (suffix.endsWith('.json')) {
+					for (const name of Object.keys((await response.json()) as object)) available.add(`${id}:${name}`);
+				}
+			}
+		}
+		expect([...used].filter((name) => !available.has(name))).toStrictEqual([]);
+	});
+
 	it('should handle unsupported HTTP methods with 405', async () => {
 		const response = await fetch(`${baseUrl}/index.html`, { method: 'POST' });
 

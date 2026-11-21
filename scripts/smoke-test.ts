@@ -53,6 +53,8 @@ try {
 		// A single source is also served under its old name.
 		await check(`${baseUrl}/tiles/default/8/55/67`, 'application/vnd.mapbox-vector-tile', (body) => body.length > 0);
 		await check(`${baseUrl}/assets/glyphs/index.json`, 'application/json', (body) => body.length > 0);
+		// The sprite that the generated style names its icons after ("base:…").
+		await check(`${baseUrl}/assets/sprites/base.json`, 'application/json', (body) => 'icon-cafe' in JSON.parse(body));
 	} finally {
 		// Windows keeps the folder locked until the process has really exited.
 		if (server.exitCode === null && server.signalCode === null) {
