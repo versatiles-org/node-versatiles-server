@@ -5,6 +5,8 @@
 # The full release (https://github.com/versatiles-org/versatiles-frontend) ships a
 # complete frontend that is far larger than what this server needs. We only refresh
 # the files we already bundle, so the static/ folder keeps its lean, curated shape.
+# A library in assets/lib/ is refreshed as a whole folder, so that files a new version
+# adds next to the ones we ship (e.g. MapLibre's worker modules) come along.
 #
 # Deliberately NOT touched / excluded:
 #   - static/index.html            our own, minimal viewer page
@@ -34,14 +36,32 @@ if [ ${#files[@]} -eq 0 ]; then
 	exit 1
 fi
 
+ARCHIVE="$(mktemp)"
+trap 'rm -f "$ARCHIVE"' EXIT
+curl -fsSL "$URL" -o "$ARCHIVE"
+
+# Add every file of the release that sits in the folder of a library we ship.
+lib_dirs="$(printf '%s\n' "${files[@]}" | grep '^assets/lib/' | sed 's|/[^/]*$|/|' | sort -u || true)"
+if [ -n "$lib_dirs" ]; then
+	while IFS= read -r f; do files+=("$f"); done < <(
+		tar -tzf "$ARCHIVE" \
+			| grep -v '/$' \
+			| grep -v '\.map$' \
+			| while IFS= read -r entry; do
+				dir="${entry%/*}/"
+				if printf '%s\n' "$lib_dirs" | grep -qxF "$dir"; then echo "$entry"; fi
+			done
+	)
+fi
+unique=()
+while IFS= read -r f; do unique+=("$f"); done < <(printf '%s\n' "${files[@]}" | sort -u)
+files=("${unique[@]}")
+
 echo "Updating ${#files[@]} file(s) in static/ from $URL"
 printf '  %s\n' "${files[@]}"
 
-# Pipeline: download -> gunzip -> untar, extracting only the files listed above.
 # tar exits non-zero if any listed file is missing from the release, which flags
 # that the upstream frontend has been restructured and this script needs a look.
-curl -fsSL "$URL" \
-	| gzip -d \
-	| tar -x -C "$STATIC_DIR" "${files[@]}"
+tar -xzf "$ARCHIVE" -C "$STATIC_DIR" "${files[@]}"
 
 echo "Done."
