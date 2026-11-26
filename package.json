@@ -72,21 +72,21 @@
   ],
   "dependencies": {
     "@versatiles/container": "^2.1.2",
-    "@versatiles/style": "^9.1.1",
+    "@versatiles/style": "^9.1.3",
     "commander": "^15.1.0",
     "open": "^11.0.4"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "^26.6.6",
+    "@types/node": "^26.6.11",
     "@versatiles/release-tool": "^2.23.0",
-    "@vitest/coverage-v8": "^5.1.1",
+    "@vitest/coverage-v8": "^5.1.2",
     "eslint": "^10.15.0",
     "prettier": "^3.10.1",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.74.0",
-    "vitest": "^5.1.1"
+    "vitest": "^5.1.2"
   },
   "overrides": {
     "minimatch": "^11.0.1"
